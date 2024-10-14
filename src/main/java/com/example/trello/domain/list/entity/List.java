@@ -1,5 +1,6 @@
 package com.example.trello.domain.list.entity;
 
+import com.example.trello.common.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,7 @@ import java.util.ArrayList;
 @Table(name = "board_list")
 @NoArgsConstructor
 @Getter
-public class List {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class List extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
