@@ -2,7 +2,7 @@ package com.example.trello.domain.member.entity;
 
 import com.example.trello.domain.workspace.entity.Workspace;
 import com.example.trello.common.entity.Timestamped;
-import com.example.trello.domain.user.entity.User;
+//import com.example.trello.domain.user.entity.User;
 import com.example.trello.domain.member.enums.MemberRole;
 import jakarta.persistence.*;
 
@@ -10,9 +10,9 @@ import jakarta.persistence.*;
 @Table(name = "member")
 public class Member extends Timestamped {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
