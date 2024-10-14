@@ -12,9 +12,4 @@ public class ListController {
 
     private final ListService listService;
 
-
-
-
-
-
 }
