@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-import javax.smartcardio.Card;
+//import javax.smartcardio.Card;
 import java.util.ArrayList;
 
 @Entity
@@ -14,12 +14,12 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Getter
 public class List extends Timestamped {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "board_id", nullable = false)
+//    private Board board;
 
-    @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Card> cards = new ArrayList<>();
+//    @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<Card> cards = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
     private String title;
