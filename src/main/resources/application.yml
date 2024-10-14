@@ -1,0 +1,22 @@
+server:
+  port: ${SERVER_PORT}
+# DB config
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB_NAME}?serverTimezone=Asia/Seoul
+    username: ${MYSQL_NAME}
+    password: ${MYSQL_PASSWORD}
+  # DB update
+  jpa:
+    hibernate:
+      ddl-auto: update
+    # sql
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+jwt:
+  secret_key: ${JWT_SECRET_KEY}
