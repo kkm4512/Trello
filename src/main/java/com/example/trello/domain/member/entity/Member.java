@@ -10,6 +10,10 @@ import jakarta.persistence.*;
 @Table(name = "member")
 public class Member extends Timestamped {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id", nullable = false)
 //    private User user;
