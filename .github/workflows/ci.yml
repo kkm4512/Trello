@@ -28,7 +28,7 @@ jobs:
           mysql database: trello
           mysql root password: ${{secrets.MYSQL_PASSWORD}}
 
-      - name: Build with Gradle (Only Test)
+      - name: 빌드 및 테스트 코드 돌리는중 ... (Only Test)
         run: |
           chmod +x ./gradlew
           ./gradlew test
