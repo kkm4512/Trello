@@ -20,6 +20,7 @@ public enum ApiResponseTestEnum implements ApiResponseEnum {
     TEST_NOT_FOUND(HttpStatus.NOT_FOUND,"테스트를 찾을 수 없습니다"),
 
     // 409
+
     TEST_DUPLICATE_CHECK(HttpStatus.CONFLICT, "테스트 중복 발생");
 
     private final HttpStatus httpStatus;

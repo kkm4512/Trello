@@ -6,8 +6,12 @@ import com.example.trello.domain.list.entity.BoardList;
 import com.example.trello.common.entity.Timestamped;
 import com.example.trello.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.util.*;
 
+
+@Getter
 @Entity
 @Table(name = "board")
 public class Board extends Timestamped {

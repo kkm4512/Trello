@@ -12,5 +12,6 @@ public class GlobalPath {
     public static final String HOST = "localhost";
     public static final String PORT = "8080";
     public static final String FILE = "/file";
+    // http://localhost:8080
     public static final String BASE_URL = HTTP + SEMICOLON  + SEPARATOR + SEPARATOR + HOST + SEMICOLON + PORT;
 }

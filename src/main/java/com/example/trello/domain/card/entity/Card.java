@@ -14,7 +14,6 @@ public class Card extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     private String content;
 

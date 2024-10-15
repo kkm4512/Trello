@@ -1,5 +1,8 @@
 package com.example.trello.domain.slack;
 
+import com.example.trello.common.annotation.CardChangeSlack;
+import com.example.trello.common.annotation.CommentAddSlack;
+import com.example.trello.common.annotation.MemberAddSlack;
 import com.example.trello.common.annotation.Slack;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,16 +65,12 @@ public class SlackService {
 
             // restTemplate
             HttpEntity<String> reqEntity = new HttpEntity<>(headers);
-            ResponseEntity<String> resEntity = restTemplate.exchange(
+            restTemplate.exchange(
                     url,
                     HttpMethod.GET,
                     reqEntity,
                     String.class
             );
-
-            JSONObject jsonObject = new JSONObject(resEntity.getBody());
-            System.out.println(jsonObject);
-
 
         } catch (Exception e){
             log.error(e.getMessage());
@@ -80,5 +79,19 @@ public class SlackService {
     @Slack
     public void SlackTest(){
 
+    }
+
+    @MemberAddSlack
+    public void memberAddSlackTest(String name){
+
+    }
+
+    @CardChangeSlack
+    public void cardChangeSlackTest(){
+
+    }
+
+    @CommentAddSlack
+    public void commentAddSlackTest() {
     }
 }
