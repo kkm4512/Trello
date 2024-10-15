@@ -1,7 +1,19 @@
 package com.example.trello.domain.attachment.service;
 
 import com.example.trello.common.exception.FileException;
+import com.example.trello.common.exception.UserException;
+import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseFileEnum;
+import com.example.trello.common.response.ApiResponseUserEnum;
+import com.example.trello.domain.attachment.entity.Attachment;
+import com.example.trello.domain.attachment.repository.AttachmentRepository;
+import com.example.trello.domain.user.dto.AuthUser;
+import com.example.trello.domain.user.entity.User;
+import com.example.trello.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import jdk.jshell.spi.ExecutionControl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,93 +26,94 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.trello.common.path.GlobalPath.DELIMITER;
+import static com.example.trello.common.path.GlobalPath.*;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AttachmentServiceImpl implements AttachmentService {
+    private final AttachmentRepository attachmentRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public List<String> uploads(Path path, List<MultipartFile> files) {
+    @Transactional
+    public ApiResponse<List<String>> uploads(AuthUser authUser, String card_id, List<MultipartFile> files) {
         try {
-            File dir = new File(path.toString());
+            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_NOT_FOUND));
+            Path directory = Paths.get("files")
+                    .resolve("cards")
+                    .resolve(card_id);
+            Files.createDirectories(directory);
             List<String> paths = new ArrayList<>();
-            dir.mkdirs();
             for ( MultipartFile file : files ) {
                 // 파일이 존재할때만
                 if (!(file == null || file.isEmpty())) {
                     String filename = UUID.randomUUID() + DELIMITER + file.getOriginalFilename();
-                    Path filePath = Paths.get(path.toString(),filename);
-                    InputStream inputStream = file.getInputStream();
-                    Files.copy(inputStream, filePath);
-                    paths.add(filePath.toString());
+                    Path filePath = Paths.get(directory.toString(),filename);
+                    // DB저장
+                    Attachment attachment = Attachment.builder()
+                            .path(filePath.toString())
+                            .user(user)
+                            .build();
+                    attachmentRepository.save(attachment);
+                    // inputStream의 자원 누수를 방지하기위한 try - with - resources
+                    try (InputStream inputStream = file.getInputStream()){
+                        Files.copy(inputStream, filePath);
+                        paths.add(filePath.toString());
+                    } catch (IOException e){
+                        log.error(e.getMessage(),e);
+                        throw new FileException(ApiResponseFileEnum.FILE_IO_ERROR);
+                    }
                 }
             }
-            return paths;
+            return new ApiResponse<>(ApiResponseFileEnum.FILE_OK,paths);
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             throw new FileException(ApiResponseFileEnum.FILE_IO_ERROR);
         }
     }
 
     @Override
-    public List<String> getFiles(Path path) {
+    public ApiResponse<List<String>> downloads(String card_id) {
         try {
-            return Files.list(path)
-                    .map(String::valueOf)
+            Path path = Paths.get("files")
+                    .resolve("cards")
+                    .resolve(card_id);
+            List<String> data = Files.list(path)
+                    .map(p -> BASE_URL +
+                            SEPARATOR + path.toString() +
+                            SEPARATOR + p.getFileName().toString())
                     .toList();
+            return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
         }
     }
 
     @Override
-    public void deletes(Path directory) {
-        // 파일일 경우 간단히 삭제
+    public ApiResponse<List<String>> deletes(String card_id) {
         try {
-            Files.delete(directory);
-        } catch (Exception e) {
-            throw new FileException(ApiResponseFileEnum.FILE_DELETE_ERROR);
+            Path path = Paths.get("files")
+                    .resolve("cards")
+                    .resolve(card_id);
+            List<String> data = Files.list(path)
+                    .peek(this::delete)
+                    .map(String::valueOf)
+                    .toList();
+            return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
+        } catch (Exception e){
+            throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
         }
+
     }
 
-    @Override
-    public void delete(Path path) {
+    private void delete(Path path) {
         try {
-            // 1. 경로가 디렉터리인지 파일인지 확인 후 삭제
-            if (Files.isDirectory(path)) {
-                // 디렉터리일 경우 재귀적으로 내부 내용 삭제
-                deleteDirectoryRecursively(path);
-            } else {
-                // 파일일 경우 간단히 삭제
-                Files.deleteIfExists(path);
-            }
+            Files.delete(path);
         } catch (Exception e) {
-            throw new FileException(ApiResponseFileEnum.FILE_DELETE_ERROR);
+            throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
         }
-    }
-
-    // 재귀적으로 디렉터리와 그 안의 파일들을 삭제하는 메서드
-    private void deleteDirectoryRecursively(Path directory) throws IOException {
-        Files.walkFileTree(directory, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                try {
-                    Files.delete(file);  // 파일 삭제
-                    return FileVisitResult.CONTINUE;
-                } catch (Exception e) {
-                    throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
-                }
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                try {
-                    Files.delete(dir);  // 디렉터리 삭제
-                    return FileVisitResult.CONTINUE;
-                } catch (Exception e) {
-                    throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
-                }
-            }
-        });
 
     }
 }
