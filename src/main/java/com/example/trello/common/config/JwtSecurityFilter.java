@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,9 +32,9 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse httpResponse,
             @NonNull FilterChain chain
     ) throws ServletException, IOException {
-        String authorizationHeader = httpRequest.getHeader("Authorization");
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String jwt = jwtUtil.substringToken(authorizationHeader);
+        String tokenValue = jwtUtil.getTokenFromRequest(httpRequest);
+        if (StringUtils.hasText(tokenValue)) {
+            String jwt = jwtUtil.substringToken(tokenValue);
             try {
                 Claims claims = jwtUtil.extractClaims(jwt);
                 Long userId = Long.parseLong(claims.getSubject());
