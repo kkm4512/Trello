@@ -24,3 +24,5 @@ jwt:
 slack:
   bot-token: ${SLACK_BOT_TOKEN} # 아까 복사한 토큰
 
+admin:
+  token: ${ADMIN_TOKEN}
