@@ -4,9 +4,8 @@ import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseMemberEnum;
 import com.example.trello.domain.member.dto.request.MemberCreateRequest;
 import com.example.trello.domain.member.dto.request.MemberUpdateRequest;
-import com.example.trello.domain.member.dto.response.MemberCreateResponse;
 import com.example.trello.domain.member.dto.response.MemberListResponse;
-import com.example.trello.domain.member.dto.response.MemberUpdateResponse;
+import com.example.trello.domain.member.dto.response.MemberResponse;
 import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.member.enums.MemberRole;
 import com.example.trello.domain.member.repository.MemberRepository;
@@ -29,7 +28,7 @@ public class MemberService {
     private final UserRepository userRepository;
 
     // 멤버 추가
-    public ApiResponse<MemberCreateResponse> createMember(Long workspaceId, MemberCreateRequest request) {
+    public ApiResponse<MemberResponse> createMember(Long workspaceId, MemberCreateRequest request) {
         try {
             Workspace workspace = workspaceRepository.findById(workspaceId)
                     .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
@@ -43,12 +42,14 @@ public class MemberService {
             member.setMemberRole(MemberRole.READ_ONLY);
             memberRepository.save(member);
 
-            MemberCreateResponse response = new MemberCreateResponse(
+            MemberResponse response = new MemberResponse(
                     member.getId(),
                     workspaceId,
                     user.getId(),
                     user.getEmail(),
-                    member.getMemberRole().name());
+                    member.getMemberRole().name(),
+                    member.getCreatedAt(),
+                    member.getUpdatedAt());
 
             return ApiResponse.of(ApiResponseMemberEnum.MEMBER_CREATE_SUCCESS, response);
         } catch (Exception e) {
@@ -65,9 +66,12 @@ public class MemberService {
                             member.getId(),
                             member.getWorkspace().getId(),
                             member.getUser().getId(),
+                            member.getEmail(),
                             member.getMemberRole().name(),
-                            member.getCreatedAt()))
+                            member.getCreatedAt(),
+                            member.getUpdatedAt()))
                     .collect(Collectors.toList());
+
             return ApiResponse.of(ApiResponseMemberEnum.MEMBER_READ_SUCCESS, response);
         } catch (Exception e) {
             return ApiResponse.of(ApiResponseMemberEnum.MEMBER_READ_FAIL, null);
@@ -75,7 +79,7 @@ public class MemberService {
     }
 
     // 멤버 역할 변경
-    public ApiResponse<MemberUpdateResponse> updateMemberRole(Long workspaceId, Long memberId, MemberUpdateRequest request) {
+    public ApiResponse<MemberResponse> updateMemberRole(Long workspaceId, Long memberId, MemberUpdateRequest request) {
         try {
             Member member = memberRepository.findByIdAndWorkspaceId(memberId, workspaceId)
                     .orElseThrow(() -> new IllegalArgumentException("Member not found"));
@@ -83,12 +87,15 @@ public class MemberService {
             member.setMemberRole(MemberRole.valueOf(request.getMemberRole()));
             memberRepository.save(member);
 
-            MemberUpdateResponse response = new MemberUpdateResponse(
+            MemberResponse response = new MemberResponse(
                     member.getId(),
                     member.getWorkspace().getId(),
                     member.getUser().getId(),
+                    member.getEmail(),
                     member.getMemberRole().name(),
+                    member.getCreatedAt(),
                     member.getUpdatedAt());
+
             return ApiResponse.of(ApiResponseMemberEnum.MEMBER_UPDATE_SUCCESS, response);
         } catch (Exception e) {
             return ApiResponse.of(ApiResponseMemberEnum.MEMBER_UPDATE_FAIL, null);

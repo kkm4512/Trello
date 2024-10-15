@@ -9,10 +9,12 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberUpdateResponse {
+public class MemberResponse {
     private Long id;
     private Long workspaceId;
     private Long userId;
+    private String email;
     private String memberRole;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

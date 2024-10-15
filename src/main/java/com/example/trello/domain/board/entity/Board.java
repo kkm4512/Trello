@@ -6,12 +6,15 @@ import com.example.trello.domain.list.entity.BoardList;
 import com.example.trello.common.entity.Timestamped;
 import com.example.trello.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
-
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "board")
 public class Board extends Timestamped {
@@ -30,11 +33,19 @@ public class Board extends Timestamped {
     @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardList> boardLists = new ArrayList<>();
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
 
 }

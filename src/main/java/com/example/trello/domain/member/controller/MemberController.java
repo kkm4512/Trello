@@ -3,9 +3,8 @@ package com.example.trello.domain.member.controller;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.domain.member.dto.request.MemberCreateRequest;
 import com.example.trello.domain.member.dto.request.MemberUpdateRequest;
-import com.example.trello.domain.member.dto.response.MemberCreateResponse;
 import com.example.trello.domain.member.dto.response.MemberListResponse;
-import com.example.trello.domain.member.dto.response.MemberUpdateResponse;
+import com.example.trello.domain.member.dto.response.MemberResponse;
 import com.example.trello.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +20,10 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<MemberCreateResponse>> createMember(
+    public ResponseEntity<ApiResponse<MemberResponse>> createMember(
             @PathVariable Long workspaceId,
             @RequestBody MemberCreateRequest request) {
-        ApiResponse<MemberCreateResponse> response = memberService.createMember(workspaceId, request);
+        ApiResponse<MemberResponse> response = memberService.createMember(workspaceId, request);
         return ApiResponse.of(response);
     }
 
@@ -35,11 +34,11 @@ public class MemberController {
     }
 
     @PutMapping("/{memberId}")
-    public ResponseEntity<ApiResponse<MemberUpdateResponse>> updateMemberRole(
+    public ResponseEntity<ApiResponse<MemberResponse>> updateMemberRole(
             @PathVariable Long workspaceId,
             @PathVariable Long memberId,
             @RequestBody MemberUpdateRequest request) {
-        ApiResponse<MemberUpdateResponse> response = memberService.updateMemberRole(workspaceId, memberId, request);
+        ApiResponse<MemberResponse> response = memberService.updateMemberRole(workspaceId, memberId, request);
         return ApiResponse.of(response);
     }
 

@@ -13,6 +13,8 @@ public class MemberListResponse {
     private Long id;
     private Long workspaceId;
     private Long userId;
+    private String email;
     private String memberRole;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
