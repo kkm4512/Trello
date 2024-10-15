@@ -1,0 +1,77 @@
+name: 'CD'
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cd:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name:  나의 깃헙 코드를 깃헙 액션의 VM에 옮기는 작업 중 ...
+        uses: actions/checkout@v4
+
+      - name: 깃헙 액션의 VM에 자바 설치중 ...
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name:  VM에 환경변수가 지워진, 그대로의 값들이 적인 application.yml 파일을 만드는중 ...
+        run: |
+          cd ./src/main/resources 
+          echo "${{ secrets.DATABASE_PROPERTIES }}" > ./application.yml
+        shell: bash
+
+      - name: VM내의 (도커 컨테이너를 활용하여) MySQL 구동 시키기
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql database: trello
+          mysql root password: ${{secrets.MYSQL_PASSWORD}}
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
+
+      - name: Make AWS application.yml
+        run: |
+          cd ./src/main/resources 
+          echo "${{ secrets.AWS_DATABASE_PROPERTIES }}" > ./application.yml
+        shell: bash
+
+      - name: AWS Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean
+          ./gradlew build -x test
+
+      - name: web docker build and push
+        run: |
+          docker login -u ${{secrets.DOCKER_HUB_ID}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+          docker build -t ${{secrets.DOCKER_HUB_ID}}/${{secrets.DOCKER_HUB_REPO}} .
+          docker push ${{secrets.DOCKER_HUB_ID}}/${{secrets.DOCKER_HUB_REPO}}
+
+      - name: Copy githubVM to ec2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{secrets.AWS_HOST}}
+          key: ${{secrets.AWS_KEY}}
+          username: ubuntu
+          source: ./docker-compose.yml
+          target: ~/docker-compose.yml
+
+      - name: executing remote ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.AWS_HOST}}
+          key: ${{secrets.AWS_KEY}}
+          username: ubuntu
+          script: |
+            sudo systemctl restart docker
+            docker login -u ${{secrets.DOCKER_HUB_ID}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+            sudo docker pull ${{secrets.DOCKER_HUB_ID}}/${{secrets.DOCKER_HUB_REPO}}            
+            cd ~/docker-compose.yml
+            sudo docker-compose down
+            sudo docker-compose up -d
+            sudo docker image prune -f
