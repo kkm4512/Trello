@@ -20,6 +20,8 @@ public enum ApiResponseFileEnum implements ApiResponseEnum {
     // 500
     FILE_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "예상치 못한 오류로 파일을 읽지 못했습니다"),
     FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 삭제하는데 실패 하였습니다"),
+    DIRECTORY_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 생성에 실패 하였습니다"),
+    FILE_COPY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 복사에 실패 하였습니다")
     ;
 
     private final HttpStatus httpStatus;

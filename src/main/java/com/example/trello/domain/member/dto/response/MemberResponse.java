@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberListResponse {
+public class MemberResponse {
     private Long id;
     private Long workspaceId;
     private Long userId;
