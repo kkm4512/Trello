@@ -38,7 +38,3 @@ out/
 
 ### .env ###
 .env
-
-### docker ###
-docker-compose.yml
-Dockerfile
