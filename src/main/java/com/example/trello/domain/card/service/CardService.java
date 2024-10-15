@@ -74,10 +74,28 @@ public class CardService {
 
         ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<PutCardResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new PutCardResponse(card));
-        return null;
+        return apiResponse;
     }
 
     public ApiResponse<GetCardResponse> getCard(Long workspaceId, Long boardsId, Long listId, Long cardId) {
-        return null;
+        boolean isWorkspace = workspaceRepository.existsById(workspaceId);
+        boolean isBoard = boardRepository.existsById(boardsId);
+        boolean list = listRepository.existsById(listId);
+        if (isWorkspace) {
+            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+        }
+        if (isBoard) {
+            throw new IllegalArgumentException("해당 보더가 없습니다.");
+        }
+        if (list) {
+            throw new IllegalArgumentException("해당 리스트가 없습니다.");
+        }
+
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new IllegalArgumentException("해당 카드가 없습니다."));
+
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponse<GetCardResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new GetCardResponse(card));
+        return apiResponse;
     }
 }
