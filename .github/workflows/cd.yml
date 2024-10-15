@@ -19,7 +19,6 @@ jobs:
 
       - name:  VM에 환경변수가 지워진, 그대로의 값들이 적인 application.yml 파일을 만드는중 ...
         run: |
-          cd ./src/main/resources 
           echo "${{ secrets.DATABASE_PROPERTIES }}" > ./application.yml
         shell: bash
 
@@ -75,3 +74,10 @@ jobs:
             sudo docker-compose down
             sudo docker-compose up -d
             sudo docker image prune -f
+
+      - name: 오류명 상세히 알려줌
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/test-results/test
