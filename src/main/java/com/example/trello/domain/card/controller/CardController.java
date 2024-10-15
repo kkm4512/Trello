@@ -6,6 +6,7 @@ import com.example.trello.domain.card.dto.request.SaveCardRequest;
 import com.example.trello.domain.card.dto.response.GetCardResponse;
 import com.example.trello.domain.card.dto.response.PutCardResponse;
 import com.example.trello.domain.card.dto.response.SaveCardResponse;
+import com.example.trello.domain.card.dto.response.deleteResponse;
 import com.example.trello.domain.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,17 @@ public class CardController {
             @PathVariable Long cardId
     ) {
         ApiResponse<GetCardResponse> apiResponse = cardService.getCard(workspaceId, boardsId, listId, cardId);
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
+    }
+
+    @DeleteMapping("/cards/{cardId}")
+    public ResponseEntity<ApiResponse<deleteResponse>> deleteCard(
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardsId,
+            @PathVariable Long listId,
+            @PathVariable Long cardId
+    ) {
+        ApiResponse<deleteResponse> apiResponse = cardService.deleteCard(workspaceId, boardsId, listId, cardId);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 }
