@@ -21,4 +21,10 @@ class SlackServiceTest {
         slackService.SlackTest();
     }
 
+    @Test
+    @DisplayName("Slack AOP Member Add Test")
+    void test2(){
+        slackService.memberAddSlackTest();
+    }
+
 }
