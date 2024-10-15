@@ -24,7 +24,8 @@ class SlackServiceTest {
     @Test
     @DisplayName("Slack AOP Member Add Test")
     void test2(){
-        slackService.memberAddSlackTest();
+        String name = "test";
+        slackService.memberAddSlackTest(name);
     }
 
 }
