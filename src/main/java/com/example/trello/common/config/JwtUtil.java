@@ -45,12 +45,14 @@ public class JwtUtil {
     }
     //JWT 생성
     // 토큰 생성
-    public String createToken(Long userId) {
+    public String createToken(Long userId, String email, String role) {
         Date date = new Date();
         return BEARER_PREFIX +
                 //Jwts.builder 를 사용하여 토큰을 생성
                 Jwts.builder()
                         .setSubject(Long.toString(userId)) // 사용자 식별자값(ID)
+                        .claim("userRole", role) // 사용자 권한
+                        .claim("email", email )
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간 = 현제시간 date.getTIME() + 만료시간 TOKEN_TIME
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘 (키 , 선택한 알고리즘)
