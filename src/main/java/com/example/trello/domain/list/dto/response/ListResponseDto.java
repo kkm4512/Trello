@@ -15,8 +15,8 @@ public class ListResponseDto {
 
     public static ListResponseDto of(BoardList list) {
         return new ListResponseDto(
-                list.getBoard().getId(),
                 list.getId(),
+                list.getBoard().getId(),
                 list.getTitle(),
                 list.getOrderNum()
         );
