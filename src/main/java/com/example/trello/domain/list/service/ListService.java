@@ -5,11 +5,11 @@ import com.example.trello.common.response.ApiResponseEnum;
 import com.example.trello.common.response.ApiResponseTestEnum;
 import com.example.trello.domain.board.entity.Board;
 import com.example.trello.domain.board.repository.BoardRepository;
-import com.example.trello.domain.list.dto.request.ListRequestDto;
+import com.example.trello.domain.list.dto.request.ListCreateRequestDto;
+import com.example.trello.domain.list.dto.request.ListUpdateDto;
 import com.example.trello.domain.list.dto.response.ListResponseDto;
 import com.example.trello.domain.list.entity.BoardList;
 import com.example.trello.domain.list.repository.ListRepository;
-import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.user.entity.User;
 import com.example.trello.domain.user.repository.UserRepository;
 import com.example.trello.domain.workspace.entity.Workspace;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,81 +37,106 @@ public class ListService {
     /**
      * 보드 리스트 생성
      */
-    public ApiResponse<ListResponseDto> createList(Long userId, Long workspaceId, Long boardId, ListRequestDto requestDto) {
+    public ApiResponse<ListResponseDto> createList(Long userId, Long workspaceId, Long boardId, ListCreateRequestDto requestDto) {
+        // 검증 및 보드 가져오기
+        Board board = validateUserWorkspaceBoard(userId, workspaceId, boardId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException());
-
-        // 읽기 전용 멤버일 시 에러 추가
-
-        Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new NoSuchElementException());
-
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NoSuchElementException());
-
+        // 새로운 리스트 생성
         BoardList boardList = BoardList.builder()
                 .board(board)
-                .user(user)
+                .user(userRepository.findById(userId).get()) // 이미 검증된 유저
                 .title(requestDto.getTitle())
-                .orderNum(1) // 기존 리스트들 맨 앞에 새로운 리스트 추가
+                .orderNum(1) // 새 리스트는 맨 앞에 추가
                 .build();
 
         // 기존 리스트들 순서 전부 + 1
-        List<BoardList> existingList = listRepository.findByBoardId(boardId);
+        listRepository.findByBoardId(boardId).forEach(list -> list.updateOrderNum(list.getOrderNum() + 1));
 
-        existingList.stream()
-                .forEach(list -> list.updateOrderNum(list.getOrderNum() + 1));
+        // 새 리스트 저장(더티체킹 있지만 명시적으로 표시함)
+        listRepository.save(boardList);
 
-        listRepository.save(boardList); // 새로 생성한 리스트 저장
-
-        ListResponseDto responseData = ListResponseDto.of(boardList); // DTO로 변환
-
-        ApiResponseEnum apiResponseEnum = ApiResponseTestEnum.TEST_SUCCESS;
-        ApiResponse<ListResponseDto> apiResponse = new ApiResponse<>(apiResponseEnum, responseData);
-        return apiResponse;
+        ListResponseDto responseData = ListResponseDto.of(boardList);
+        return new ApiResponse<>(ApiResponseTestEnum.TEST_SUCCESS, responseData);
     }
 
     /**
      * 보드 리스트 제목 or 순서 수정
      */
-    public ApiResponse<ListResponseDto> updateList(Long userId, Long workspaceId, Long boardId, Long listId, ListRequestDto requestDto) {
+    public ApiResponse<ListResponseDto> updateList(Long userId, Long workspaceId, Long boardId, Long listId, ListUpdateDto requestDto) {
+        // 검증 및 보드 가져오기
+        Board board = validateUserWorkspaceBoard(userId, workspaceId, boardId);
 
-        // 유저 가져오기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException());
+        // 수정할 리스트 가져오기
+        BoardList boardList = listRepository.findById(listId)
+                .orElseThrow(() -> new NoSuchElementException("리스트를 찾을 수 없습니다."));
 
-        // 읽기 전용 멤버일 시 에러 추가
+        // 기존 순서와 새로운 순서 비교
+        Integer existingOrderNum = boardList.getOrderNum();
+        Integer newOrderNum = requestDto.getOrderNum() != null ? requestDto.getOrderNum() : existingOrderNum;
 
-        // 워크 스페이스 있는지 확인
-        Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new NoSuchElementException());
-
-        // 보드 있는지 확인
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NoSuchElementException());
-
-        // 보드 리스트 가져오기
-        BoardList boardList = listRepository.findById(listId).orElseThrow();
-
-        Integer existingOrderNum = boardList.getOrderNum(); // 리스트의 기존 순서 저장
-
-
-        boardList.updateTitle(requestDto.getTitle()); // 리스트 제목 업데이트
-        boardList.updateOrderNum(requestDto.getOrderNum()); // 리스트 순서 업데이트
-
-        // 만약 리스트 순서 변경했으면 보드 내의 다른 리스트들도 그에 따른 순서 업데이트
-        if (existingOrderNum != boardList.getOrderNum()) {
-            List<BoardList> existingList = listRepository.findByBoardId(boardId); // 보드 안에 있는 모든 리스트 가져오기
-            existingList.stream()
-                    .filter(list -> list.getOrderNum() >= requestDto.getOrderNum()) // 옮긴 리스트의 현 위치보다 뒤에 있는 리스트
-                    .forEach(targetList -> targetList.updateOrderNum(targetList.getOrderNum() + 1)); // 순서 하나씩 뒤로 밀기
+        if (!existingOrderNum.equals(newOrderNum)) {
+            List<BoardList> existingLists = listRepository.findByBoardId(boardId);
+            if (existingOrderNum < newOrderNum) {
+                // 순서가 뒤로 갈 때
+                existingLists.stream()
+                        .filter(list -> list.getOrderNum() > existingOrderNum && list.getOrderNum() <= newOrderNum)
+                        .forEach(list -> list.updateOrderNum(list.getOrderNum() - 1));
+            } else {
+                // 순서가 앞으로 올 때
+                existingLists.stream()
+                        .filter(list -> list.getOrderNum() < existingOrderNum && list.getOrderNum() >= newOrderNum)
+                        .forEach(list -> list.updateOrderNum(list.getOrderNum() + 1));
+            }
+            boardList.updateOrderNum(newOrderNum);
         }
 
-        ListResponseDto responseData = ListResponseDto.of(boardList); // DTO로 변환
+        boardList.updateTitle(requestDto.getTitle());
+        ListResponseDto responseData = ListResponseDto.of(boardList);
+        return new ApiResponse<>(ApiResponseTestEnum.TEST_SUCCESS, responseData);
+    }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseTestEnum.TEST_SUCCESS;
-        ApiResponse<ListResponseDto> apiResponse = new ApiResponse<>(apiResponseEnum, responseData);
-        return apiResponse;
+    /**
+     * 보드 리스트 삭제
+     */
+    public ApiResponse<Void> deleteList(Long userId, Long workspaceId, Long boardId, Long listId) {
+        // 검증 및 보드 가져오기
+        Board board = validateUserWorkspaceBoard(userId, workspaceId, boardId);
+
+        // 삭제할 리스트 가져오기
+        BoardList boardList = listRepository.findById(listId)
+                .orElseThrow(() -> new NoSuchElementException("리스트를 찾을 수 없습니다."));
+
+        // 삭제할 리스트 순서 조정
+        Integer deleteOrderNum = boardList.getOrderNum();
+        adjustOrderAfterDelete(listRepository.findByBoardId(boardId), deleteOrderNum);
+
+        // 리스트 삭제
+        listRepository.delete(boardList);
+
+        return new ApiResponse<>(ApiResponseTestEnum.TEST_SUCCESS, null);
+    }
+
+    /**
+     * 유저, 워크스페이스, 보드 검증 공통 로직
+     */
+    private Board validateUserWorkspaceBoard(Long userId, Long workspaceId, Long boardId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("유저를 찾을 수 없습니다."));
+
+        workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new NoSuchElementException("워크스페이스를 찾을 수 없습니다."));
+
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException("보드를 찾을 수 없습니다."));
+    }
+
+    /**
+     * 보드 리스트 순서 조정 공통 로직
+     */
+    private void adjustOrderAfterDelete(List<BoardList> existingLists, Integer deleteOrderNum) {
+        existingLists.stream()
+                .filter(list -> list.getOrderNum() > deleteOrderNum)
+                .forEach(list -> list.updateOrderNum(list.getOrderNum() - 1));
     }
 }
+

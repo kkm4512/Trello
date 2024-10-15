@@ -1,106 +1,122 @@
 package com.example.trello.domain.attachment.service;
 
 import com.example.trello.common.exception.FileException;
+import com.example.trello.common.exception.UserException;
+import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseFileEnum;
+import com.example.trello.common.response.ApiResponseUserEnum;
+import com.example.trello.domain.attachment.entity.Attachment;
+import com.example.trello.domain.attachment.repository.AttachmentRepository;
+import com.example.trello.domain.card.repository.CardRepository;
+import com.example.trello.domain.user.dto.AuthUser;
+import com.example.trello.domain.user.entity.User;
+import com.example.trello.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static com.example.trello.common.path.GlobalPath.DELIMITER;
+import static com.example.trello.common.path.GlobalPath.BASE_URL;
+import static com.example.trello.common.path.GlobalPath.SEPARATOR;
+import static com.example.trello.common.response.ApiResponseFileEnum.*;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AttachmentServiceImpl implements AttachmentService {
+    // Attachment 기능 관련 서비스
+    private final AttachmentPathService pathService;
+    private final AttachmentFileService fileService;
+    private final AttachmentDirectoryService directoryService;
+
+    // 그 외
+    private final AttachmentRepository attachmentRepository;
+    private final CardRepository cardRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public List<String> uploads(Path path, List<MultipartFile> files) {
+    @Transactional
+    public ApiResponse<List<String>> uploads(AuthUser authUser, String card_id, List<MultipartFile> files) {
+        List<String> fileNames = new ArrayList<>();
         try {
-            File dir = new File(path.toString());
-            List<String> paths = new ArrayList<>();
-            dir.mkdirs();
+            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_NOT_FOUND));
+            //TODO: Card Exception + cardRepositroy에서 찾는것으로 변경 해야함
+//            Card card = cardRepository.findById(Long.parseLong(card_id)).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_NOT_FOUND));
+            Path directory = pathService.mkFilesCardsPath(card_id);
+            directoryService.mkdir(directory);
             for ( MultipartFile file : files ) {
                 // 파일이 존재할때만
                 if (!(file == null || file.isEmpty())) {
-                    String filename = UUID.randomUUID() + DELIMITER + file.getOriginalFilename();
-                    Path filePath = Paths.get(path.toString(),filename);
-                    InputStream inputStream = file.getInputStream();
-                    Files.copy(inputStream, filePath);
-                    paths.add(filePath.toString());
+                    String filename = fileService.mkFilename(file.getOriginalFilename());
+                    Path filePath = pathService.mkPath(directory, filename);
+                    // DB저장
+                    Attachment attachment = Attachment.builder()
+                            .path(filePath.toString())
+                            .originFileName(file.getOriginalFilename())
+                            .user(user)
+                            //TODO: Card로 바꿔야함
+                            .card_id(Long.parseLong(card_id))
+                            .build();
+                    attachmentRepository.save(attachment);
+                    // inputStream의 자원 누수를 방지하기위한 try - with - resources
+                    fileService.mkFile(filePath, file);
+                    fileNames.add(file.getOriginalFilename());
                 }
             }
-            return paths;
+            return new ApiResponse<>(ApiResponseFileEnum.FILE_OK,fileNames);
         } catch (Exception e) {
-            throw new FileException(ApiResponseFileEnum.FILE_IO_ERROR);
+            log.error(e.getMessage(),e);
+            throw new FileException(FILE_IO_ERROR);
         }
     }
 
     @Override
-    public List<String> getFiles(Path path) {
+    public ApiResponse<List<String>> downloads(String card_id) {
+        List<String> data = new ArrayList<>();
         try {
-            return Files.list(path)
+            Path path = pathService.mkFilesCardsPath(card_id);
+             data = Files.list(path)
+                    .map(p -> BASE_URL +
+                            SEPARATOR + path.toString() +
+                            SEPARATOR + p.getFileName().toString())
+                    .toList();
+            return ApiResponse.of(FILE_OK,data);
+        } catch (Exception e) {
+            if (data.isEmpty()) {
+                return ApiResponse.of(FILE_OK,data);
+            }
+            log.error(e.getMessage(),e);
+            throw new FileException(FILE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public ApiResponse<List<String>> deletes(String card_id) {
+        try {
+            Path path = pathService.mkFilesCardsPath(card_id);
+            List<String> data = Files.list(path)
+                    .peek(this::delete)
                     .map(String::valueOf)
                     .toList();
-        } catch (Exception e) {
-            throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
+            return ApiResponse.of(FILE_OK,data);
+        } catch (Exception e){
+            throw new FileException(FILE_NOT_FOUND);
         }
+
     }
 
-    @Override
-    public void deletes(Path directory) {
-        // 파일일 경우 간단히 삭제
+    private void delete(Path path) {
         try {
-            Files.delete(directory);
+            Files.delete(path);
         } catch (Exception e) {
-            throw new FileException(ApiResponseFileEnum.FILE_DELETE_ERROR);
+            throw new FileException(FILE_NOT_FOUND);
         }
-    }
-
-    @Override
-    public void delete(Path path) {
-        try {
-            // 1. 경로가 디렉터리인지 파일인지 확인 후 삭제
-            if (Files.isDirectory(path)) {
-                // 디렉터리일 경우 재귀적으로 내부 내용 삭제
-                deleteDirectoryRecursively(path);
-            } else {
-                // 파일일 경우 간단히 삭제
-                Files.deleteIfExists(path);
-            }
-        } catch (Exception e) {
-            throw new FileException(ApiResponseFileEnum.FILE_DELETE_ERROR);
-        }
-    }
-
-    // 재귀적으로 디렉터리와 그 안의 파일들을 삭제하는 메서드
-    private void deleteDirectoryRecursively(Path directory) throws IOException {
-        Files.walkFileTree(directory, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                try {
-                    Files.delete(file);  // 파일 삭제
-                    return FileVisitResult.CONTINUE;
-                } catch (Exception e) {
-                    throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
-                }
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                try {
-                    Files.delete(dir);  // 디렉터리 삭제
-                    return FileVisitResult.CONTINUE;
-                } catch (Exception e) {
-                    throw new FileException(ApiResponseFileEnum.FILE_NOT_FOUND);
-                }
-            }
-        });
 
     }
 }

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ListRequestDto {
+public class ListCreateRequestDto {
     @NotBlank
     private String title;
-    private Integer orderNum;
+
 }

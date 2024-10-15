@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "board_list")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 public class BoardList extends Timestamped {
 
@@ -30,7 +30,8 @@ public class BoardList extends Timestamped {
     @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Card> cards = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

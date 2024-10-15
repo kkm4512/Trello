@@ -1,8 +1,8 @@
 package com.example.trello.domain.list.controller;
 
-import com.example.trello.common.annotation.Auth;
 import com.example.trello.common.response.ApiResponse;
-import com.example.trello.domain.list.dto.request.ListRequestDto;
+import com.example.trello.domain.list.dto.request.ListCreateRequestDto;
+import com.example.trello.domain.list.dto.request.ListUpdateDto;
 import com.example.trello.domain.list.dto.response.ListResponseDto;
 import com.example.trello.domain.list.service.ListService;
 import com.example.trello.domain.user.dto.AuthUser;
@@ -20,26 +20,46 @@ public class ListController {
     /**
      * Board의 List 생성
      */
-    @PostMapping("workspaces/{workspaceId}/boards/{boardsId}/lists")
+    @PostMapping("workspaces/{workspaceId}/boards/{boardId}/lists")
     public ResponseEntity<ApiResponse> createBoardList(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardId,
-            @RequestBody ListRequestDto requestDto
+            @RequestBody ListCreateRequestDto requestDto
     ) {
         ApiResponse<ListResponseDto> apiResponse = listService.createList(authUser.getId(), workspaceId, boardId, requestDto);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
-    @PutMapping("workspaces/{workspaceId}/boards/{boardsId}/lists/{listId}")
+    @PutMapping("workspaces/{workspaceId}/boards/{boardId}/lists/{listId}")
     public ResponseEntity<ApiResponse> updateBoardList(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardId,
             @PathVariable Long listId,
-            @RequestBody ListRequestDto requestDto
+            @RequestBody ListUpdateDto requestDto
     ) {
         ApiResponse<ListResponseDto> apiResponse = listService.updateList(authUser.getId(), workspaceId, boardId, listId, requestDto);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
+
+    /**
+     * Board의 List 삭제
+     */
+    @DeleteMapping("workspaces/{workspaceId}/boards/{boardId}/lists/{listId}")
+    public ResponseEntity<ApiResponse> deleteBoardList(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardId,
+            @PathVariable Long listId
+    ) {
+        ApiResponse<Void> apiResponse = listService.deleteList(authUser.getId(), workspaceId, boardId, listId);
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
+    }
+
+
+
+
+
+
 }
