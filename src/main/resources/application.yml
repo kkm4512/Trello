@@ -20,3 +20,7 @@ spring:
         format_sql: true
 jwt:
   secret_key: ${JWT_SECRET_KEY}
+
+slack:
+  bot-token: ${SLACK_BOT_TOKEN} # 아까 복사한 토큰
+
