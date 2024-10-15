@@ -1,15 +1,16 @@
 package com.example.trello.domain.board.entity;
 
-import com.example.trello.domain.workspace.entity.Workspace;
-// import com.example.trello.domain.boardList.entity.BoardList;
 import com.example.trello.common.entity.Timestamped;
-// import com.example.trello.domain.user.entity.User;
+import com.example.trello.domain.workspace.entity.Workspace;
 import jakarta.persistence.*;
-import java.util.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
 @Table(name = "board")
+@Getter
+@NoArgsConstructor
 public class Board extends Timestamped {
 
     @Id
