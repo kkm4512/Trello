@@ -1,7 +1,7 @@
 package com.example.trello.domain.user.dto;
 
 import com.example.trello.domain.user.entity.User;
-import com.example.trello.domain.user.entity.UserRoleEnum;
+import com.example.trello.domain.user.entity.UserRole;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ public class UserResponseDto {
     private String email;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
-    private UserRoleEnum role;
+    private UserRole role;
 
     public UserResponseDto(User user) {
         this.id = user.getId();

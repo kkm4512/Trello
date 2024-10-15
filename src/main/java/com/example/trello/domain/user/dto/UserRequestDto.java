@@ -1,6 +1,5 @@
 package com.example.trello.domain.user.dto;
 
-import com.example.trello.domain.user.entity.UserRoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
