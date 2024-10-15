@@ -21,5 +21,5 @@ public abstract class Timestamped {
 
     @LastModifiedDate
     @Column
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
 }

@@ -1,3 +1,4 @@
+/*
 package com.example.trello.domain.list.controller;
 
 import com.example.trello.common.response.ApiResponse;
@@ -14,9 +15,11 @@ public class ListController {
 
     private final ListService listService;
 
-    /**
+    */
+/**
      * Board의 List 생성
-     */
+     *//*
+
     @PostMapping("/{boardId}/list")
     public ResponseEntity<ApiResponse> createBoardList(@PathVariable Long boardId, @RequestBody ListCreateRequestDto requestDto) {
         ApiResponse<ListResponseDto> apiResponse = listService.createList(boardId, requestDto);
@@ -24,3 +27,4 @@ public class ListController {
     }
 
 }
+*/

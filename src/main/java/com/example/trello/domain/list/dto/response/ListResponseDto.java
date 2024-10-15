@@ -1,3 +1,4 @@
+/*
 package com.example.trello.domain.list.dto.response;
 
 import com.example.trello.domain.list.entity.BoardList;
@@ -24,3 +25,4 @@ public class ListResponseDto {
     }
 
 }
+*/

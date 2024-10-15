@@ -1,3 +1,4 @@
+/*
 package com.example.trello.domain.list.service;
 
 import com.example.trello.common.response.ApiResponse;
@@ -47,3 +48,4 @@ public class ListService {
 
 
 }
+*/

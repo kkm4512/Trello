@@ -1,0 +1,116 @@
+### 회원가입
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "testuse1r@example.com",
+  "password": "testpassword1234!",
+  "adminKey": "adminkey"
+}
+
+### 회원가입
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "testuser2@example.com",
+  "password": "testpassword1234!",
+  "adminKey": "adminkey"
+}
+
+### 회원가입
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "testuser3@example.com",
+  "password": "testpassword1234!",
+  "adminKey": "adminkey"
+}
+
+### 회원탈퇴
+DELETE http://localhost:8080/users/1
+Content-Type: application/json
+
+{
+  "password": "testpassword"
+}
+
+### 비밀번호 변경
+PATCH http://localhost:8080/users/1/changepassword
+Content-Type: application/json
+
+{
+  "password": "oldpassword",
+  "newpassword": "newpassword"
+}
+
+### 로그인
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "testpassword1234!"
+}
+
+### 관리자 권한 부여
+PATCH http://localhost:8080/users/role/set/1
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+### 워크스페이스 생성
+POST http://localhost:8080/workspaces
+Content-Type: application/json
+
+{
+  "title": "워크스페이스 제목",
+  "description": "워크스페이스 설명"
+}
+
+### 워크스페이스 조회
+GET http://localhost:8080/workspaces/1
+Content-Type: application/json
+
+### 워크스페이스 수정
+PUT http://localhost:8080/workspaces/1
+Content-Type: application/json
+
+{
+  "title": "수정된 워크스페이스 제목",
+  "description": "수정된 설명"
+}
+
+### 워크스페이스 삭제
+DELETE http://localhost:8080/workspaces/1
+Content-Type: application/json
+
+
+### 멤버 생성
+POST http://localhost:8080/workspaces/1/members
+Content-Type: application/json
+
+{
+  "userId": 2
+}
+
+### 멤버 목록 조회
+GET http://localhost:8080/workspaces/1/members
+Content-Type: application/json
+
+### 멤버 역할 변경
+PUT http://localhost:8080/workspaces/1/members/1
+Content-Type: application/json
+
+{
+  "memberRole": "BODER_MEMBER"
+}
+
+### 멤버 삭제
+DELETE http://localhost:8080/workspaces/1/members/1
+Content-Type: application/json
+
+
