@@ -8,11 +8,12 @@ import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.list.dto.request.ListCreateRequestDto;
 import com.example.trello.domain.list.dto.response.ListResponseDto;
 import com.example.trello.domain.list.entity.BoardList;
-import com.example.trello.domain.list.entity.List;
 import com.example.trello.domain.list.repository.ListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +24,16 @@ public class ListService {
     private final BoardRepository boardRepository;
 
     public ApiResponse<ListResponseDto> createList(Long boardId, ListCreateRequestDto requestDto) {
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException()); // 예외 처리 나중에 함
 
         BoardList boardList = BoardList.builder()
                 .board(board)
                 .title(requestDto.getTitle())
-                .order(1)
+                .orderNum(1)
                 .build();
 
-        listRepository.save(boardList);
+        listRepository.save(boardList); // 저장
 
         ListResponseDto responseData = ListResponseDto.of(boardList); // DTO로 변환
 
@@ -39,6 +41,8 @@ public class ListService {
         ApiResponse<ListResponseDto> apiResponse = new ApiResponse<>(apiResponseEnum, responseData);
         return apiResponse;
     }
+
+
 
 
 

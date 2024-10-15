@@ -8,9 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "board_list")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,23 +22,23 @@ public class BoardList extends Timestamped {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Card> cards = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//    @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<Card> cards = new ArrayList<>();
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
     @Column(nullable = false, unique = true)
     private String title;
 
     @Column
-    private Integer order;
+    private Integer orderNum;
 
     @Builder
-    public BoardList(Board board, String title, Integer order) {
+    public BoardList(Board board, String title, Integer orderNum) {
         this.board = board;
         this.title = title;
-        this.order = order;
+        this.orderNum = orderNum;
     }
 }

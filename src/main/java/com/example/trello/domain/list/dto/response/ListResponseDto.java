@@ -18,7 +18,7 @@ public class ListResponseDto {
                 list.getBoard().getId(),
                 list.getId(),
                 list.getTitle(),
-                list.getOrder()
+                list.getOrderNum()
         );
 
     }

@@ -17,7 +17,7 @@ public class ListController {
     /**
      * Board의 List 생성
      */
-    @PostMapping("/{{boardId}/list")
+    @PostMapping("/{boardId}/list")
     public ResponseEntity<ApiResponse> createBoardList(@PathVariable Long boardId, @RequestBody ListCreateRequestDto requestDto) {
         ApiResponse<ListResponseDto> apiResponse = listService.createList(boardId, requestDto);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
