@@ -45,7 +45,7 @@ public class WorkspaceService {
         }
     }
 
-    // 워크스페이스 조회
+    // 워크스페이스 조회 (재작업 1순위)
     public ApiResponse<WorkspaceResponse> getWorkspace(Long workspaceId) {
         try {
             Workspace workspace = workspaceRepository.findById(workspaceId)
