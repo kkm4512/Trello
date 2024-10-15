@@ -1,5 +1,6 @@
 package com.example.trello.domain.user.controller;
 
+import com.example.trello.common.response.ApiResponse;
 import com.example.trello.domain.user.dto.UserRequestDto;
 import com.example.trello.domain.user.dto.UserResponseDto;
 import com.example.trello.domain.user.service.UserService;
@@ -18,7 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> signup(@RequestBody UserRequestDto userRequest){
-        return ResponseEntity.ok(userService.signup(userRequest));
+    public ResponseEntity<ApiResponse<UserResponseDto>> signup(@RequestBody UserRequestDto userRequest){
+        ApiResponse<UserResponseDto> apiResponse = userService.signup(userRequest);
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 }

@@ -4,7 +4,6 @@ import com.example.trello.domain.user.entity.User;
 import com.example.trello.domain.user.entity.UserRoleEnum;
 import lombok.Getter;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Getter
