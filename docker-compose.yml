@@ -16,8 +16,8 @@ services:
 
 
   backend:
-    container_name: springcommunity_container
-    image: nayoun340/springcommunity
+    container_name: trello_container
+    image: nayoun340/trello
     expose:
       - 8080
     ports:
