@@ -34,6 +34,17 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // Slack
+    implementation("com.slack.api:bolt:1.32.0")
+    implementation("com.slack.api:bolt-servlet:1.32.0")
+    implementation("com.slack.api:bolt-jetty:1.32.0")
+    implementation("org.slf4j:slf4j-simple:1.7.36")
+
+    // JSONObject
+    implementation 'org.json:json:20211205'
+
+
+
 }
 
 tasks.named('test') {

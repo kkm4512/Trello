@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class BaseException extends RuntimeException {
-    private ApiResponseEnum apiResponseEnum;
+    private final ApiResponseEnum apiResponseEnum;
 
     public BaseException(ApiResponseEnum apiResponseEnum) {
         this.apiResponseEnum = apiResponseEnum;
