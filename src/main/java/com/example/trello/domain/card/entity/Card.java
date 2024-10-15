@@ -2,6 +2,7 @@ package com.example.trello.domain.card.entity;
 
 import com.example.trello.common.entity.Timestamped;
 import com.example.trello.domain.board.entity.Board;
+import com.example.trello.domain.card.dto.request.PutCardRequest;
 import com.example.trello.domain.card.dto.request.SaveCardRequest;
 import com.example.trello.domain.list.entity.BoardList;
 import com.example.trello.domain.user.entity.User;
@@ -30,12 +31,17 @@ public class Card extends Timestamped {
     @JoinColumn(name = "board_list_id")
     private BoardList list;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
-    private List<CardManager> cardManagers;
+//    @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
+//    private List<member> cardManagers;
 
     public Card(SaveCardRequest request, BoardList list) {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.list = list;
+    }
+
+    public void update(PutCardRequest request) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
     }
 }
