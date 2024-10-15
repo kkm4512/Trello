@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Comment extends Timestamped {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String comment;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
