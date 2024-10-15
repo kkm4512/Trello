@@ -18,6 +18,6 @@ public class GetCardResponse {
         this.title = card.getTitle();
         this.content = card.getContent();
         this.createdAt = card.getCreatedAt();
-        this.updatedAt = card.getModifiedAt();
+        this.updatedAt = card.getUpdatedAt();
     }
 }
