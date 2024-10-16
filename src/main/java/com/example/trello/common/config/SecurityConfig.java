@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/login", "/users").permitAll()
+                        // 배포서버에서 테스트 해야해서 임시로 만들어 놨습니다 !
+                        .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
                         .anyRequest().authenticated()
                 )
