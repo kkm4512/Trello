@@ -14,6 +14,8 @@ import com.example.trello.domain.cardmember.dto.response.SaveCardMemberResponse;
 import com.example.trello.domain.cardmember.entity.CardMember;
 import com.example.trello.domain.cardmember.repository.CardMemberRepository;
 import com.example.trello.domain.list.repository.ListRepository;
+import com.example.trello.domain.member.entity.Member;
+import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.entity.User;
 import com.example.trello.domain.user.repository.UserRepository;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
@@ -28,15 +30,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardMemberService {
     private final CardMemberRepository cardMemberRepository;
+    private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final BoardRepository boardRepository;
     private final ListRepository listRepository;
     private final CardRepository cardRepository;
-    private final UserRepository userRepository;
 
     /* 카드 멤버 추가 */
     @Transactional
     public ApiResponse<SaveCardMemberResponse> saveCardMember(Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardMemberRequest request) {
+        // 워크스페이스, 보더, 리스트, 카드가 존재하는지 확인
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
@@ -52,10 +55,11 @@ public class CardMemberService {
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new IllegalArgumentException("해당 카드가 없습니다."));
 
+        // 등록하려는 멤버 각각 추출 후 담당자 등록
         List<MemberInfo> members = new ArrayList<>();
         for (Long id : request.getMemberId()) {
-            User member = userRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저를 찾지 못했습니다."));
+            Member member = memberRepository.findByUserId(id).orElseThrow(
+                    () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.save(cardMember);
             members.add(new MemberInfo(member.getId(), member.getEmail()));
@@ -69,6 +73,7 @@ public class CardMemberService {
     /* 카드 멤버 삭제 */
     @Transactional
     public ApiResponse<DeleteCardMemberResponse> deleteCardMember(Long workspaceId, Long boardsId, Long listId, Long cardId, DeleteCardMemberRequest request) {
+        // 워크스페이스, 보더, 리스트, 카드가 존재하는지 확인
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
@@ -84,14 +89,16 @@ public class CardMemberService {
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new IllegalArgumentException("해당 카드가 없습니다."));
 
+        // 등록하려는 멤버 각각 추출 후 담당자 삭제
         List<MemberInfo> members = new ArrayList<>();
         for (Long id : request.getMemberId()) {
-            User member = userRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저를 찾지 못했습니다."));
+            Member member = memberRepository.findByUserId(id).orElseThrow(
+                    () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.delete(cardMember);
             members.add(new MemberInfo(member.getId(), member.getEmail()));
         }
+
         ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<DeleteCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCardMemberResponse(members));
         return apiResponse;
