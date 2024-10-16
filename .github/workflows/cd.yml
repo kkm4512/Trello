@@ -17,9 +17,9 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name:  VM에 환경변수가 지워진, 그대로의 값들이 적인 application.yml 파일을 만드는중 ...
+      - name: dev yml 파일 생성
         run: |
-          echo "${{ secrets.DATABASE_PROPERTIES }}" > ./application.yml
+          echo "${{ secrets.APPLICATION_DEV_YML }}" > ./application-dev.yml
         shell: bash
 
       - name: VM내의 (도커 컨테이너를 활용하여) MySQL 구동 시키기
@@ -28,30 +28,36 @@ jobs:
           mysql database: trello
           mysql root password: ${{secrets.MYSQL_PASSWORD}}
 
-      - name: Build with Gradle
+      - name: 빌드 및 테스트 코드 돌리는중 ...
         run: |
           chmod +x ./gradlew
           ./gradlew build
 
-      - name: Make AWS application.yml
+      - name: aws 배포용 yml 파일 생성
         run: |
           cd ./src/main/resources 
-          echo "${{ secrets.AWS_DATABASE_PROPERTIES }}" > ./application.yml
+          echo "${{ secrets.APPLICATION_PROD_YML }}" > ./application.yml
         shell: bash
 
-      - name: AWS Build with Gradle
+      - name: aws 배포를 위한 application.yml 의 프로필을 prod로 바꿔주기
+        run: |
+          cd ./src/main/resources 
+          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
+        shell: bash
+
+      - name: 다시 빌드
         run: |
           chmod +x ./gradlew
           ./gradlew clean
           ./gradlew build -x test
 
-      - name: web docker build and push
+      - name: 도커로 빌드시키고, hub에 올리기
         run: |
           docker login -u ${{secrets.DOCKER_HUB_ID}} -p ${{secrets.DOCKER_HUB_TOKEN}}
           docker build -t ${{secrets.DOCKER_HUB_ID}}/${{secrets.DOCKER_HUB_REPO}} .
           docker push ${{secrets.DOCKER_HUB_ID}}/${{secrets.DOCKER_HUB_REPO}}
 
-      - name: Copy githubVM to ec2
+      - name: ec2에 docker-compose.yml 파일 복사시키기
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{secrets.AWS_HOST}}
