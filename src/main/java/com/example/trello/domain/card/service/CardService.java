@@ -1,5 +1,6 @@
 package com.example.trello.domain.card.service;
 
+import com.example.trello.common.annotation.CardChangeSlack;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseEnum;
@@ -53,6 +54,7 @@ public class CardService {
     }
 
     /* 카드 수정 */
+    @CardChangeSlack
     @Transactional
     public ApiResponse<PutCardResponse> updateCard(Long workspaceId, Long boardsId, Long listId, Long cardId, PutCardRequest request) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
