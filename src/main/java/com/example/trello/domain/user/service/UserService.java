@@ -58,8 +58,8 @@ public class UserService {
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
         ApiResponseEnum apiResponseEnum = ApiResponseUserEnum.USER_LOGIN_OK;
-
-        User user = (User) userRepository.findByEmail(email).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_UNAUTHORIZED));
+        //유저 이메일 db 존제 여부 검증
+        User user = validateLoginEmail(email);
 
         //탈퇴한 유저 검증
         validateDeletedUser(email);
@@ -148,5 +148,10 @@ public class UserService {
             }
             role = UserRole.ADMIN;
         }
+    }
+
+    public User validateLoginEmail(String email){
+        User user = (User) userRepository.findByEmail(email).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_UNAUTHORIZED));
+        return user;
     }
 }
