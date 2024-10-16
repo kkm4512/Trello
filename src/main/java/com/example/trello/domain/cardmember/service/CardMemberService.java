@@ -18,6 +18,7 @@ import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.member.enums.MemberRole;
 import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.dto.AuthUser;
+import com.example.trello.domain.user.repository.UserRepository;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import java.util.List;
 public class CardMemberService {
     private final CardMemberRepository cardMemberRepository;
     private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
     private final BoardRepository boardRepository;
     private final ListRepository listRepository;
@@ -56,9 +58,11 @@ public class CardMemberService {
         for (Long id : request.getMemberId()) {
             Member member = memberRepository.findByUserId(id).orElseThrow(
                     () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
+            String email = memberRepository.findEmailByUserId(id).orElseThrow(
+                    () -> new IllegalArgumentException("해당 유저의 이메일을 찾을 수 없습니다.")).toString();
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.save(cardMember);
-            members.add(new MemberInfo(member.getId(), member.getEmail()));
+            members.add(new MemberInfo(member.getId(), email));
         }
 
         ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
@@ -85,9 +89,11 @@ public class CardMemberService {
         List<MemberInfo> members = new ArrayList<>();
         for (Long id : request.getMemberId()) {
             Member member = memberOrElseThrow(id);
+            String email = userRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("해당 유저의 이메일을 찾을 수 없습니다.")).getEmail();
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.delete(cardMember);
-            members.add(new MemberInfo(member.getId(), member.getEmail()));
+            members.add(new MemberInfo(member.getId(), email));
         }
 
         ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;

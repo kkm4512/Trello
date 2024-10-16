@@ -9,10 +9,9 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkspaceResponse {
+public class WorkspaceUpdateResponse {
     private Long id;
     private String title;
     private String description;
-    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

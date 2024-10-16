@@ -2,47 +2,85 @@
 
 @ADMIN_TOKEN = AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC
 
-### 회원가입 - 관리자
+### 회원가입 - 관리자 1
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser12334343423@example.com",
+  "email": "admin1@example.com",
   "password": "testpassword1234!",
   "admin": true,
   "adminToken": "{{ADMIN_TOKEN}}"
 }
 
-### 회원가입 - 일반 사용자
+### 회원가입 - 관리자 2
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser1@example.com",
+  "email": "admin2@example.com",
+  "password": "testpassword1234!",
+  "admin": true,
+  "adminToken": "{{ADMIN_TOKEN}}"
+}
+
+### 회원가입 - 일반 사용자 1
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
   "password": "testpassword1234!",
   "admin": false,
-  "adminToken": "string"
+  "adminToken": ""
 }
 
-### 회원가입
+### 회원가입 - 일반 사용자 2
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser3@example.com",
+  "email": "user2@example.com",
   "password": "testpassword1234!",
-  "adminKey": ""
+  "admin": false,
+  "adminToken": ""
 }
 
-### 로그인
+### 로그인 - 관리자 1
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "testuser1@example.com",
+  "email": "admin1@example.com",
   "password": "testpassword1234!"
 }
 
+### 로그인 - 관리자 2
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "admin2@example.com",
+  "password": "testpassword1234!"
+}
+
+### 로그인 - 일반 사용자 1
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "testpassword1234!"
+}
+
+### 로그인 - 일반 사용자 2
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "testpassword1234!"
+}
 
 ### 회원탈퇴
 DELETE {{baseUrl}}/users/1
@@ -79,7 +117,7 @@ Content-Type: application/json
 }
 
 ### 워크스페이스 조회
-GET{{baseUrl}}/workspaces/1
+GET{{baseUrl}}/workspaces
 Content-Type: application/json
 
 ### 워크스페이스 수정
