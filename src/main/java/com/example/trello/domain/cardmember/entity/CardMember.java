@@ -18,8 +18,8 @@ public class CardMember extends Timestamped {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
@@ -27,6 +27,6 @@ public class CardMember extends Timestamped {
 
     public CardMember(Card card, Member member) {
         this.card = card;
-        this.member = member;
+        this.user = member.getUser();
     }
 }

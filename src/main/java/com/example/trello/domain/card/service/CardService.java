@@ -66,7 +66,7 @@ public class CardService {
         }
 
         // 카드 등록
-        Card card = cardRepository.save(new Card(request, list, user.getUser()));
+        Card card = cardRepository.save(new Card(request, list, user));
 
         ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<SaveCardResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new SaveCardResponse(card));
@@ -89,7 +89,7 @@ public class CardService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        boolean cardMember = cardMemberRepository.existsByMemberIdAndCardId(user.getUser().getId(), cardId);
+        boolean cardMember = cardMemberRepository.existsByUserIdAndCardId(user.getUser().getId(), cardId);
         if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
@@ -157,7 +157,7 @@ public class CardService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        boolean cardMember = cardMemberRepository.existsByMemberIdAndCardId(user.getUser().getId(), cardId);
+        boolean cardMember = cardMemberRepository.existsByUserIdAndCardId(user.getUser().getId(), cardId);
         if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }

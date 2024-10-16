@@ -16,8 +16,7 @@ import com.example.trello.domain.cardmember.repository.CardMemberRepository;
 import com.example.trello.domain.list.repository.ListRepository;
 import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.member.repository.MemberRepository;
-import com.example.trello.domain.user.entity.User;
-import com.example.trello.domain.user.repository.UserRepository;
+import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,16 @@ public class CardMemberService {
 
     /* 카드 멤버 추가 */
     @Transactional
-    public ApiResponse<SaveCardMemberResponse> saveCardMember(Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardMemberRequest request) {
+    public ApiResponse<SaveCardMemberResponse> saveCardMember(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardMemberRequest request) {
+        Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
+                () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
+
+        boolean authMember = cardMemberRepository.existsByUserIdAndCardId(user.getId(), cardId);
+
+        if (!authMember) {
+            throw new IllegalArgumentException("해당 카드의 담당자가 아닙니다.");
+        }
+
         // 워크스페이스, 보더, 리스트, 카드가 존재하는지 확인
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
@@ -72,7 +80,16 @@ public class CardMemberService {
 
     /* 카드 멤버 삭제 */
     @Transactional
-    public ApiResponse<DeleteCardMemberResponse> deleteCardMember(Long workspaceId, Long boardsId, Long listId, Long cardId, DeleteCardMemberRequest request) {
+    public ApiResponse<DeleteCardMemberResponse> deleteCardMember(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, DeleteCardMemberRequest request) {
+        Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
+                () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
+
+        boolean authMember = cardMemberRepository.existsByUserIdAndCardId(user.getId(), cardId);
+
+        if (!authMember) {
+            throw new IllegalArgumentException("해당 카드의 담당자가 아닙니다.");
+        }
+
         // 워크스페이스, 보더, 리스트, 카드가 존재하는지 확인
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
