@@ -1,4 +1,4 @@
-package com.example.trello.domain.list.dto;
+package com.example.trello.domain.list.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ListRequestDto {
-
+public class ListCreateRequestDto {
     @NotBlank
-    private String name;
-    private Integer order;
+    private String title;
 
 }

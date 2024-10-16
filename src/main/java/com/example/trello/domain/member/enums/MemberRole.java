@@ -1,6 +1,7 @@
 package com.example.trello.domain.member.enums;
 
 public enum MemberRole {
-    ADMIN,   // 관리자 역할
-    MEMBER   // 일반 멤버 역할
+    WORKSPACE_ADMIN, // 워크스페이스 관리자
+    BOARD_MEMBER, // 보드 멤버 읽기/쓰기
+    READ_ONLY // 읽기 전용
 }

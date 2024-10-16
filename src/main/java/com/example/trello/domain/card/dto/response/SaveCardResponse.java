@@ -1,13 +1,17 @@
 package com.example.trello.domain.card.dto.response;
 
+import com.example.trello.domain.card.entity.Card;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class SaveCardResponse {
-    private Long id;
-    private String title;
-    private String content;
-    private List<Long> user;
+    private final Long id;
+    private final String title;
+    private final String content;
+
+    public SaveCardResponse(Card card) {
+        this.id = card.getId();
+        this.title = card.getTitle();
+        this.content = card.getContent();
+    }
 }
