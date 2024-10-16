@@ -1,5 +1,6 @@
 package com.example.trello.domain.comment.service;
 
+import com.example.trello.common.annotation.CommentAddSlack;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseEnum;
@@ -32,6 +33,7 @@ public class CommentService {
 
     /* 댓글 생성 */
     @Transactional
+    @CommentAddSlack
     public ApiResponse<SaveCommentResponse> saveComment(Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardRequest request) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
