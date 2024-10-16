@@ -38,28 +38,17 @@ public class CommentService {
     @Transactional
     @CommentAddSlack
     public ApiResponse<SaveCommentResponse> saveComment(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardRequest request) {
-        Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
+        // 워크 스페이스, 보더 존재하는지 확인
+        Member user = memberOrElseThrow(authUser);
 
         // 읽기 권한인지 확인
-        if (user.getMemberRole() == MemberRole.READ_ONLY) {
-            throw new IllegalArgumentException("권한이 없습니다.");
-        }
+        userMemberRole(user);
 
-        boolean isWorkspace = workspaceRepository.existsById(workspaceId);
-        boolean isBoard = boardRepository.existsById(boardsId);
-        boolean list = listRepository.existsById(listId);
-        if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
-        }
-        if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
-        }
-        if (!list) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
-        }
-        Card card = cardRepository.findById(cardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 카드가 없습니다."));
+        // 워크스페이스, 보더, 리스트 유무 확인
+        validateWorkspaceAndBoardAndList(workspaceId, boardsId, listId);
+
+        // 카드 가져오기
+        Card card = cardOrElse(cardId);
 
         // 유저 빠져있음
         Comment comment = new Comment(request, card, user.getUser());
@@ -73,14 +62,75 @@ public class CommentService {
     /* 댓글 수정 */
     @Transactional
     public ApiResponse<PutCommentResponse> updateComment(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, Long commentId, PutCommentRequest request) {
-        Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
+        // 워크 스페이스, 보더 존재하는지 확인
+        Member user = memberOrElseThrow(authUser);
 
         // 읽기 권한인지 확인
+        userMemberRole(user);
+
+        // 워크스페이스, 보더, 리스트 유무 확인
+        validateWorkspaceAndBoardAndList(workspaceId, boardsId, listId);
+
+        // 카드 가져오기
+        Card card = cardOrElse(cardId);
+
+        Comment comment = commentOrElse(commentId, user);
+
+        comment.update(request);
+
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponse<PutCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new PutCommentResponse(comment, card));
+        return apiResponse;
+    }
+
+    /* 댓글 삭제 */
+    @Transactional
+    public ApiResponse<DeleteCommentResponse> deleteComment(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, Long commentId) {
+        // 워크 스페이스, 보더 존재하는지 확인
+        Member user = memberOrElseThrow(authUser);
+
+        // 읽기 권한인지 확인
+        userMemberRole(user);
+
+        // 워크스페이스, 보더, 리스트, 카드 유무 확인
+        check_All_In_One(workspaceId, boardsId, listId, cardId);
+
+        Comment comment = commentOrElse(commentId, user);
+
+        commentRepository.delete(comment);
+
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponse<DeleteCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCommentResponse(comment));
+        return apiResponse;
+    }
+
+    /* 유저 읽기 권한 확인 */
+    private void userMemberRole(Member user) {
         if (user.getMemberRole() == MemberRole.READ_ONLY) {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
+    }
 
+    /* 로그인한 유저 정보 */
+    private Member memberOrElseThrow(AuthUser authUser) {
+        return memberRepository.findByUserId(authUser.getId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
+    }
+
+    /* 댓글 가져오기 */
+    private Comment commentOrElse(Long commentId, Member user) {
+        return commentRepository.findByIdAndUserId(commentId, user.getUser().getId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 댓글이 없습니다."));
+    }
+
+    /* 카드 가져오기 */
+    private Card cardOrElse(Long cardId) {
+        return cardRepository.findById(cardId).orElseThrow(
+                () -> new IllegalArgumentException("해당 카드가 없습니다."));
+    }
+
+    /* 워크스페이스, 보더, 리스트 유무 확인 */
+    private void validateWorkspaceAndBoardAndList(Long workspaceId, Long boardsId, Long listId) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
@@ -93,29 +143,10 @@ public class CommentService {
         if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
-        Card card = cardRepository.findById(cardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 카드가 없습니다."));
-        Comment comment = commentRepository.findByIdAndUserId(commentId, user.getUser().getId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다."));
-
-        comment.update(request);
-
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
-        ApiResponse<PutCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new PutCommentResponse(comment, card));
-        return apiResponse;
     }
 
-    /* 댓글 삭제 */
-    @Transactional
-    public ApiResponse<DeleteCommentResponse> deleteComment(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, Long commentId) {
-        Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
-
-        // 읽기 권한인지 확인
-        if (user.getMemberRole() == MemberRole.READ_ONLY) {
-            throw new IllegalArgumentException("권한이 없습니다.");
-        }
-
+    /* 워크스페이스, 보더, 리스트, 카드 유무 확인 */
+    private void check_All_In_One(Long workspaceId, Long boardsId, Long listId, Long cardId) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
@@ -132,14 +163,5 @@ public class CommentService {
         if (!card) {
             throw new IllegalArgumentException("해당 카드가 없습니다.");
         }
-
-        Comment comment = commentRepository.findByIdAndUserId(commentId, user.getUser().getId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다."));
-
-        commentRepository.delete(comment);
-
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
-        ApiResponse<DeleteCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCommentResponse(comment));
-        return apiResponse;
     }
 }
