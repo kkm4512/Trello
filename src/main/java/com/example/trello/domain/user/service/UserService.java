@@ -40,22 +40,13 @@ public class UserService {
         UserRole role = UserRole.USER;
 
         //탈퇴한 유저 검증
-        if(userRepository.findDeletedEmail(email).isPresent()){
-            throw new UserException(ApiResponseUserEnum.USER_DELETED_ERROR);
-        }
+        validateDeletedUser(email);
 
         //이메일 중복 검증
-        if (userRepository.findByEmail(email).isPresent()){
-            throw new UserException(ApiResponseUserEnum.USER_DUPLICATE_EMAIL_ERROR);
-        }
+        validateDuplicateEmail(email);
 
         //관리자 권한 검증
-        if (userRequest.isAdmin()) {
-            if (!ADMIN_TOKEN.equals(userRequest.getAdminToken())) {
-                throw new UserException(ApiResponseUserEnum.USER_ADMINTOKEN_ERROR);
-            }
-            role = UserRole.ADMIN;
-        }
+        validateAdminToken(userRequest, role);
 
         User user = new User(userRequest,role, password);
         User savedUser = userRepository.save(user);
@@ -69,14 +60,12 @@ public class UserService {
         ApiResponseEnum apiResponseEnum = ApiResponseUserEnum.USER_LOGIN_OK;
 
         User user = (User) userRepository.findByEmail(email).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_UNAUTHORIZED));
+
         //탈퇴한 유저 검증
-        if(userRepository.findDeletedEmail(email).isPresent()){
-            throw new UserException(ApiResponseUserEnum.USER_DELETED_ERROR);
-        }
+        validateDeletedUser(email);
+
         //비밀번호 검증
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new UserException(ApiResponseUserEnum.USER_PASSWORD_ERROR);
-        }
+        validatePassword(password, user.getPassword());
 
         String token = jwtUtil.createToken(user.getId(), user.getEmail(), String.valueOf(user.getRole()));
         jwtUtil.addJwtToCookie(token, res);
@@ -87,15 +76,14 @@ public class UserService {
     public ApiResponse<String> changePassword(Long userId, ChangePasswordRequestDto changePasswordRequest, AuthUser authUser) {
         User user = findUserById(userId);
         ApiResponseEnum apiResponseEnum = ApiResponseUserEnum.USER_PASSWORD_OK;
+        //탈퇴한 유저 검증
+        validateDeletedUser(user.getEmail());
 
-        //로그인 유저와 비밀번호 변경 유저 검증
-        if(!userId.equals(authUser.getId())) {
-            throw new UserException(ApiResponseUserEnum.USER_UNAUTHORIZED);
-        }
+        //로그인 유저와 탈퇴시도 유저 검증
+        validateUser(userId, authUser);
+
         //비밀번호 검증
-        if(!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
-            throw new UserException(ApiResponseUserEnum.USER_PASSWORD_ERROR);
-        }
+        validatePassword(changePasswordRequest.getOldPassword(), user.getPassword());
 
         String password = passwordEncoder.encode(changePasswordRequest.getNewPassword());
         user.changePassword(password);
@@ -109,16 +97,16 @@ public class UserService {
         User user = findUserById(userId);
         ApiResponseEnum apiResponseEnum = ApiResponseUserEnum.USER_DELETE_OK;
         String password = userRequest.getPassword();
+        //탈퇴한 유저 검증
+        validateDeletedUser(user.getEmail());
 
         //로그인 유저와 탈퇴시도 유저 검증
-        if(!userId.equals(authUser.getId())) {
-            throw new UserException(ApiResponseUserEnum.USER_UNAUTHORIZED);
-        }
-        //유저 비밀번호 검증
-        if(!passwordEncoder.matches(password, user.getPassword())) {
-            throw new UserException(ApiResponseUserEnum.USER_PASSWORD_ERROR);
-        }
+        validateUser(userId, authUser);
 
+        //유저 비밀번호 검증
+        validatePassword(password, user.getPassword());
+
+        //delete boolean값 재설정
         user.delete();
         userRepository.save(user);
         ApiResponse<String> apiResponse = new ApiResponse<>(apiResponseEnum, "회원탈퇴 완료");
@@ -127,5 +115,38 @@ public class UserService {
 
     public User findUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_NOT_FOUND));
+    }
+
+    public void validatePassword(String oldPassword, String newPassword) {
+        if(!passwordEncoder.matches(oldPassword, newPassword)) {
+            throw new UserException(ApiResponseUserEnum.USER_PASSWORD_ERROR);
+        }
+    }
+
+    public void validateUser(Long userId, AuthUser authUser) {
+        if(!userId.equals(authUser.getId())) {
+            throw new UserException(ApiResponseUserEnum.USER_UNAUTHORIZED);
+        }
+    }
+
+    public void validateDeletedUser(String email) {
+        if(userRepository.findDeletedEmail(email).isPresent()){
+            throw new UserException(ApiResponseUserEnum.USER_DELETED_ERROR);
+        }
+    }
+
+    public void validateDuplicateEmail(String email){
+        if (userRepository.findByEmail(email).isPresent()){
+            throw new UserException(ApiResponseUserEnum.USER_DUPLICATE_EMAIL_ERROR);
+        }
+    }
+
+    public void validateAdminToken(UserRequestDto userRequest, UserRole role) {
+        if (userRequest.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(userRequest.getAdminToken())) {
+                throw new UserException(ApiResponseUserEnum.USER_ADMINTOKEN_ERROR);
+            }
+            role = UserRole.ADMIN;
+        }
     }
 }
