@@ -40,13 +40,13 @@ public class CardMemberService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
         Card card = cardRepository.findById(cardId).orElseThrow(
@@ -72,13 +72,13 @@ public class CardMemberService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
         Card card = cardRepository.findById(cardId).orElseThrow(
