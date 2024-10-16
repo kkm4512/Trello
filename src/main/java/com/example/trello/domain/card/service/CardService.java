@@ -33,12 +33,12 @@ public class CardService {
     @Transactional
     public ApiResponse<SaveCardResponse> saveCard(Long workspaceId, Long boardsId, Long listId, SaveCardRequest request) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
 
         boolean isBoard = boardRepository.existsById(boardsId);
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
 
@@ -58,13 +58,13 @@ public class CardService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
 
@@ -83,13 +83,13 @@ public class CardService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
 
@@ -106,13 +106,13 @@ public class CardService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
         Card card = cardRepository.findById(cardId).orElseThrow(

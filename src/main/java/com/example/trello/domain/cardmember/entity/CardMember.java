@@ -1,4 +1,4 @@
-package com.example.trello.domain.comment.entity;
+package com.example.trello.domain.cardmember.entity;
 
 import com.example.trello.common.entity.Timestamped;
 import com.example.trello.domain.card.entity.Card;
@@ -8,14 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "card_member")
 @Getter
 @NoArgsConstructor
-public class Comment extends Timestamped {
+public class CardMember extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String comment;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
@@ -24,4 +23,9 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private Card card;
+
+    public CardMember(Card card, User member) {
+        this.card = card;
+        this.user = member;
+    }
 }
