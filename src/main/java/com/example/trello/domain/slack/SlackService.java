@@ -80,18 +80,4 @@ public class SlackService {
     public void SlackTest(){
 
     }
-
-    @MemberAddSlack
-    public void memberAddSlackTest(String name){
-
-    }
-
-    @CardChangeSlack
-    public void cardChangeSlackTest(){
-
-    }
-
-    @CommentAddSlack
-    public void commentAddSlackTest() {
-    }
 }
