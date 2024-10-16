@@ -4,6 +4,7 @@ import com.example.trello.domain.user.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,12 +14,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
+
+import java.util.Arrays;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final JwtSecurityFilter jwtSecurityFilter;
+    private final Environment env;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -35,11 +40,15 @@ public class SecurityConfig {
                 .anonymous(AbstractHttpConfigurer::disable) // AnonymousAuthenticationFilter 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // BasicAuthenticationFilter 비활성화
                 .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users").permitAll()
-                        .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(auth -> {
+                    if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
+                        auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    }
+                    auth.requestMatchers("/users/login", "/users").permitAll()
+                            .requestMatchers("/api/test/**").permitAll() // 배포 테스트 전용 임시
+                            .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
+                            .anyRequest().authenticated();
+                })
                 .build();
     }
 }

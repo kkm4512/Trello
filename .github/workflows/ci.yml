@@ -17,9 +17,9 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: VM에 환경변수가 지워진, 그대로의 값들이 적인 application.yml 파일을 만드는중 ...
+      - name: dev yml 파일 생성
         run: |
-          echo "${{ secrets.DATABASE_PROPERTIES }}" > ./application.yml
+          echo "${{ secrets.APPLICATION_DEV_YML }}" > ./application-dev.yml
         shell: bash
 
       - name: VM내의 (도커 컨테이너를 활용하여) MySQL 구동 시키기
@@ -39,5 +39,3 @@ jobs:
         with:
           name: test-results
           path: build/test-results/test
-
-          #

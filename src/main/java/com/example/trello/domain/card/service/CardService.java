@@ -1,5 +1,6 @@
 package com.example.trello.domain.card.service;
 
+import com.example.trello.common.annotation.CardChangeSlack;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseEnum;
@@ -58,18 +59,19 @@ public ApiResponse<SaveCardResponse> saveCard(Long workspaceId, Long boardsId, L
     }
 
     /* 카드 수정 */
+    @CardChangeSlack
     @Transactional
     public ApiResponse<PutCardResponse> updateCard(Long workspaceId, Long boardsId, Long listId, Long cardId, PutCardRequest request) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
 
@@ -107,17 +109,18 @@ public ApiResponse<SaveCardResponse> saveCard(Long workspaceId, Long boardsId, L
     }
 
     /* 카드 삭제 */
+    @Transactional
     public ApiResponse<deleteResponse> deleteCard(Long workspaceId, Long boardsId, Long listId, Long cardId) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
-        if (isWorkspace) {
+        if (!isWorkspace) {
             throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
         }
-        if (isBoard) {
+        if (!isBoard) {
             throw new IllegalArgumentException("해당 보더가 없습니다.");
         }
-        if (list) {
+        if (!list) {
             throw new IllegalArgumentException("해당 리스트가 없습니다.");
         }
         Card card = cardRepository.findById(cardId).orElseThrow(
