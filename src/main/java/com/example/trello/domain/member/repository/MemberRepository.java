@@ -3,6 +3,7 @@ package com.example.trello.domain.member.repository;
 import com.example.trello.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ListRepository extends JpaRepository<BoardList, Long> {
-    List<BoardList> findByBoardId(Long boardId);
+    List<BoardList> findAllByBoardId(Long boardId);
 }
