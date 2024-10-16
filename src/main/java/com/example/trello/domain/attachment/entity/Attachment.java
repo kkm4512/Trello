@@ -21,7 +21,10 @@ public class Attachment extends Timestamped {
     private Long id;
     private String originFileName;
     private String path;
-    private Long card_id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_id")
+    private Card card;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
