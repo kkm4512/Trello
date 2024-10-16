@@ -1,6 +1,10 @@
 package com.example.trello.domain.attachment.validate;
 
 import com.example.trello.common.exception.FileException;
+import com.example.trello.common.exception.UserException;
+import com.example.trello.common.response.ApiResponseUserEnum;
+import com.example.trello.domain.member.entity.Member;
+import com.example.trello.domain.member.enums.MemberRole;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -38,5 +42,11 @@ public class FileValidate {
     private static String getFileExtension(MultipartFile file){
         String fileName = file.getOriginalFilename();
         return fileName.substring(fileName.lastIndexOf(".") + 1 );
+    }
+
+    public static void isRole(Member user) {
+        if (user.getMemberRole().equals(MemberRole.READ_ONLY)) {
+            throw new UserException(ApiResponseUserEnum.USER_ROLE_IS_READ_ONLY);
+        }
     }
 }
