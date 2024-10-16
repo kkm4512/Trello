@@ -14,6 +14,9 @@ public enum ApiResponseUserEnum implements ApiResponseEnum {
     USER_PASSWORD_OK(HttpStatus.OK, "비밀번호 변경 완료"),
     USER_DELETE_OK(HttpStatus.OK, "회원 탈퇴완료"),
 
+    //403
+    USER_ROLE_IS_READ_ONLY(HttpStatus.FORBIDDEN,"유저의 권한은 읽기 전용 입니다"),
+
     //404
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
 
@@ -29,7 +32,6 @@ public enum ApiResponseUserEnum implements ApiResponseEnum {
 
     //500
     USER_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "사용자을 삭제하는데 실패하였습니다"),
-    USER_ROLE_IS_READ_ONLY(HttpStatus.BAD_REQUEST,"유저의 권한은 읽기 전용 입니다")
     ;
 
 
