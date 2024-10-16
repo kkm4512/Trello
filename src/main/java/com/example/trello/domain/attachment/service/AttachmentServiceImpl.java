@@ -5,7 +5,6 @@ import com.example.trello.common.exception.FileException;
 import com.example.trello.common.exception.UserException;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseFileEnum;
-import com.example.trello.common.response.ApiResponseUserEnum;
 import com.example.trello.domain.attachment.entity.Attachment;
 import com.example.trello.domain.attachment.repository.AttachmentRepository;
 import com.example.trello.domain.card.entity.Card;

@@ -28,7 +28,10 @@ public enum ApiResponseUserEnum implements ApiResponseEnum {
     USER_PASSWORD_ERROR(HttpStatus.UNAUTHORIZED,"잘못된 비밀 번호를 입력하셨습니다"),
 
     //500
-    USER_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "사용자을 삭제하는데 실패하였습니다");
+    USER_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "사용자을 삭제하는데 실패하였습니다"),
+    USER_ROLE_IS_READ_ONLY(HttpStatus.BAD_REQUEST,"유저의 권한은 읽기 전용 입니다")
+    ;
+
 
 
     private final HttpStatus httpStatus;
