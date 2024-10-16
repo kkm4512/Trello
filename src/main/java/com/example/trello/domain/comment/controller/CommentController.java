@@ -8,8 +8,10 @@ import com.example.trello.domain.comment.dto.response.DeleteCommentResponse;
 import com.example.trello.domain.comment.dto.response.PutCommentResponse;
 import com.example.trello.domain.comment.dto.response.SaveCommentResponse;
 import com.example.trello.domain.comment.service.CommentService;
+import com.example.trello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,18 +22,20 @@ public class CommentController {
 
     @PostMapping("/comments")
     public ResponseEntity<ApiResponse<SaveCommentResponse>> saveComment(
+            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardsId,
             @PathVariable Long listId,
             @PathVariable Long cardId,
             @RequestBody SaveCardRequest request
     ) {
-        ApiResponse<SaveCommentResponse> apiResponse = commentService.saveComment(workspaceId, boardsId, listId, cardId, request);
+        ApiResponse<SaveCommentResponse> apiResponse = commentService.saveComment(authUser, workspaceId, boardsId, listId, cardId, request);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<ApiResponse<PutCommentResponse>> updateComment(
+            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardsId,
             @PathVariable Long listId,
@@ -39,19 +43,20 @@ public class CommentController {
             @PathVariable Long commentId,
             @RequestBody PutCommentRequest request
     ) {
-        ApiResponse<PutCommentResponse> apiResponse = commentService.updateComment(workspaceId, boardsId, listId, cardId, commentId, request);
+        ApiResponse<PutCommentResponse> apiResponse = commentService.updateComment(authUser, workspaceId, boardsId, listId, cardId, commentId, request);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<ApiResponse<DeleteCommentResponse>> deleteComment(
+            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardsId,
             @PathVariable Long listId,
             @PathVariable Long cardId,
             @PathVariable Long commentId
     ) {
-        ApiResponse<DeleteCommentResponse> apiResponse = commentService.deleteComment(workspaceId, boardsId, listId, cardId, commentId);
+        ApiResponse<DeleteCommentResponse> apiResponse = commentService.deleteComment(authUser, workspaceId, boardsId, listId, cardId, commentId);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 }

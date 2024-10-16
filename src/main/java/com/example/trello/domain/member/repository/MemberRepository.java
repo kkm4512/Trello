@@ -12,4 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByIdAndWorkspaceId(Long memberId, Long workspaceId);
 
+    Optional<Member> findByUserId(Long userId);
+
 }
