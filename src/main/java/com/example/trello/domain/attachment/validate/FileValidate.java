@@ -1,11 +1,13 @@
 package com.example.trello.domain.attachment.validate;
 
 import com.example.trello.common.exception.FileException;
-import com.example.trello.common.response.ApiResponseFileEnum;
-import com.example.trello.domain.attachment.constant.FIleExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.example.trello.common.response.ApiResponseFileEnum.FILE_BIG_SIZE;
+import static com.example.trello.common.response.ApiResponseFileEnum.FILE_UN_SUPPORT_FORMAT;
+import static com.example.trello.domain.attachment.constant.FIleExtension.*;
 
 public class FileValidate {
     /**
@@ -14,12 +16,12 @@ public class FileValidate {
     public static void isFormatFile(List<MultipartFile> files){
         for ( MultipartFile file : files ){
             String extension = getFileExtension(file);
-            if (!extension.equals(FIleExtension.JPG.getExtension()) ||
-                    extension.equals(FIleExtension.PNG.getExtension()) ||
-                    extension.equals(FIleExtension.CSV.getExtension()) ||
-                    extension.equals(FIleExtension.PDF.getExtension())
+            if (!extension.equals(JPG.getExtension()) ||
+                    extension.equals(PNG.getExtension()) ||
+                    extension.equals(CSV.getExtension()) ||
+                    extension.equals(PDF.getExtension())
             ){
-                throw new FileException(ApiResponseFileEnum.FILE_UN_SUPPORT_FORMAT);
+                throw new FileException(FILE_UN_SUPPORT_FORMAT);
             }
         }
     }
@@ -28,7 +30,7 @@ public class FileValidate {
         for ( MultipartFile file : files ){
             long size = file.getSize();
             if (size > 5242880L) {
-                throw new FileException(ApiResponseFileEnum.FILE_BIG_SIZE);
+                throw new FileException(FILE_BIG_SIZE);
             }
         }
     }

@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class ListCreateRequestDto {
     @NotBlank
     private String title;
+
 }
