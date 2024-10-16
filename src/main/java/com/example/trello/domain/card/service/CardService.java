@@ -106,7 +106,7 @@ public class CardService {
         List<Comment> comments = commentRepository.findByCardId(card.getId());
         List<CardCommentInfo> commentInfos = comments.stream().map(CardCommentInfo::new).toList();
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_GET_OK;
         ApiResponse<GetCardResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new GetCardResponse(card, commentInfos));
         return apiResponse;
     }
@@ -129,7 +129,7 @@ public class CardService {
 
         cardRepository.delete(card);
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SEARCH_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_DELETE_OK;
         ApiResponse<deleteResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new deleteResponse(card));
         return apiResponse;
     }
