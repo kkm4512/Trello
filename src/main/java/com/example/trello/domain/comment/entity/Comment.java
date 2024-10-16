@@ -1,7 +1,9 @@
 package com.example.trello.domain.comment.entity;
 
 import com.example.trello.common.entity.Timestamped;
+import com.example.trello.domain.card.dto.request.SaveCardRequest;
 import com.example.trello.domain.card.entity.Card;
+import com.example.trello.domain.comment.dto.request.PutCommentRequest;
 import com.example.trello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,4 +26,13 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private Card card;
+
+    public Comment(SaveCardRequest request, Card card) {
+        this.comment = request.getContent();
+        this.card = card;
+    }
+
+    public void update(PutCommentRequest request) {
+        this.comment = request.getComment();
+    }
 }
