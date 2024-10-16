@@ -5,12 +5,14 @@ import com.example.trello.domain.comment.dto.CardCommentInfo;
 import com.example.trello.domain.comment.entity.Comment;
 import lombok.Getter;
 import org.hibernate.annotations.Comments;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+//@NoArgsConstructor
 public class GetCardResponse {
     private final Long id;
     private final String title;

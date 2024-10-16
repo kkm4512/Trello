@@ -21,7 +21,7 @@ public class ListController {
      * Board의 List 생성
      */
     @PostMapping("workspaces/{workspaceId}/boards/{boardId}/lists")
-    public ResponseEntity<ApiResponse> createBoardList(
+    public ResponseEntity<ApiResponse<ListResponseDto>> createBoardList(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardId,
@@ -32,7 +32,7 @@ public class ListController {
     }
 
     @PutMapping("workspaces/{workspaceId}/boards/{boardId}/lists/{listId}")
-    public ResponseEntity<ApiResponse> updateBoardList(
+    public ResponseEntity<ApiResponse<ListResponseDto>> updateBoardList(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardId,
@@ -47,7 +47,7 @@ public class ListController {
      * Board의 List 삭제
      */
     @DeleteMapping("workspaces/{workspaceId}/boards/{boardId}/lists/{listId}")
-    public ResponseEntity<ApiResponse> deleteBoardList(
+    public ResponseEntity<ApiResponse<Void>> deleteBoardList(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardId,
@@ -56,10 +56,4 @@ public class ListController {
         ApiResponse<Void> apiResponse = listService.deleteList(authUser.getId(), workspaceId, boardId, listId);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
-
-
-
-
-
-
 }

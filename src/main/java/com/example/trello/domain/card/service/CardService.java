@@ -7,6 +7,8 @@ import com.example.trello.common.response.ApiResponseEnum;
 import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.card.dto.request.PutCardRequest;
 import com.example.trello.domain.card.dto.request.SaveCardRequest;
+import com.example.trello.domain.card.dto.request.SearchCardRequest;
+import com.example.trello.domain.card.dto.response.SearchCardResponse;
 import com.example.trello.domain.card.dto.response.GetCardResponse;
 import com.example.trello.domain.card.dto.response.PutCardResponse;
 import com.example.trello.domain.card.dto.response.SaveCardResponse;
@@ -25,6 +27,9 @@ import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -175,8 +180,26 @@ public class CardService {
 
         cardRepository.delete(card);
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SEARCH_OK;
         ApiResponse<deleteResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new deleteResponse(card));
         return apiResponse;
+    }
+
+
+    public ApiResponse<Page<SearchCardResponse>> searchCard(Long workspaceId, Long boardsId, SearchCardRequest request, int page, int size) {
+        boolean isWorkspace = workspaceRepository.existsById(workspaceId);
+        boolean isBoard = boardRepository.existsById(boardsId);
+        if (!isWorkspace) {
+            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+        }
+        if (!isBoard) {
+            throw new IllegalArgumentException("해당 보더가 없습니다.");
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<SearchCardResponse> cards = cardRepository.searchCards(request, pageable);
+
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SEARCH_OK;
+        return new ApiResponse<>(apiResponseEnum, cards);
     }
 }

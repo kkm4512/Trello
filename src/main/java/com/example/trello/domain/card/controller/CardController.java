@@ -1,8 +1,11 @@
 package com.example.trello.domain.card.controller;
 
+import com.example.trello.common.annotation.Auth;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.domain.card.dto.request.PutCardRequest;
 import com.example.trello.domain.card.dto.request.SaveCardRequest;
+import com.example.trello.domain.card.dto.request.SearchCardRequest;
+import com.example.trello.domain.card.dto.response.SearchCardResponse;
 import com.example.trello.domain.card.dto.response.GetCardResponse;
 import com.example.trello.domain.card.dto.response.PutCardResponse;
 import com.example.trello.domain.card.dto.response.SaveCardResponse;
@@ -10,6 +13,7 @@ import com.example.trello.domain.card.dto.response.deleteResponse;
 import com.example.trello.domain.card.service.CardService;
 import com.example.trello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -68,4 +72,17 @@ public class CardController {
         ApiResponse<deleteResponse> apiResponse = cardService.deleteCard(authUser, workspaceId, boardsId, listId, cardId);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
+
+    @GetMapping("/cards/search")
+    public ResponseEntity<ApiResponse<Page<SearchCardResponse>>> searchCards(
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardsId,
+            @RequestBody SearchCardRequest request,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        ApiResponse<Page<SearchCardResponse>> apiResponse = cardService.searchCard(workspaceId, boardsId, request, page, size);
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
+    }
+
 }

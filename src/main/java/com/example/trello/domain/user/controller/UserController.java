@@ -34,6 +34,13 @@ public class UserController {
 
     @PatchMapping("/{user_id}/change_password")
     public ResponseEntity<ApiResponse<String>> changePassword(@PathVariable Long user_id, @RequestBody ChangePasswordRequestDto changePasswordRequest, @AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(userService.changePassword(user_id, changePasswordRequest, authUser));
+        ApiResponse<String> response = userService.changePassword(user_id, changePasswordRequest, authUser);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    @DeleteMapping("/{user_id}")
+    public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable Long user_id, @RequestBody UserRequestDto userRequest, @AuthenticationPrincipal AuthUser authUser) {
+        ApiResponse<String> response = userService.deleteUser(user_id, userRequest, authUser);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 }
