@@ -12,7 +12,6 @@ import org.hibernate.annotations.SoftDelete;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@SoftDelete(columnName = "deleted")
 @Table(name ="users")
 public class User extends Timestamped {
     @Id
@@ -28,6 +27,10 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Column(name = "deleted")
+    private boolean deleted = false;
+
+
     public User(UserRequestDto userRequest, UserRole role, String password) {
         this.email = userRequest.getEmail();
         this.password = password;
@@ -37,5 +40,9 @@ public class User extends Timestamped {
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

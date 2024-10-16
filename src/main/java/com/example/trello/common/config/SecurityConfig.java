@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .anonymous(AbstractHttpConfigurer::disable) // AnonymousAuthenticationFilter 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // BasicAuthenticationFilter 비활성화
                 .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
+
                 .authorizeHttpRequests(auth -> {
                     if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
                         auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();

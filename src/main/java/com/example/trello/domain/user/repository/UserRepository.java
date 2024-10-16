@@ -11,4 +11,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query(value = "SELECT email FROM users u WHERE u.email = :email AND u.deleted = true", nativeQuery = true)
     Optional<Object> findDeletedEmail(String email);
+
+    @Query(value = "UPDATE Users u SET u.deleted = true WHERE u.id = :userId", nativeQuery = true)
+    void updatedeleted(Long userId);
 }
