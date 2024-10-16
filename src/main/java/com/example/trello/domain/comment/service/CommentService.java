@@ -1,5 +1,6 @@
 package com.example.trello.domain.comment.service;
 
+import com.example.trello.common.annotation.CommentAddSlack;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseEnum;
@@ -35,6 +36,7 @@ public class CommentService {
 
     /* 댓글 생성 */
     @Transactional
+    @CommentAddSlack
     public ApiResponse<SaveCommentResponse> saveComment(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardRequest request) {
         Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
                 () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
