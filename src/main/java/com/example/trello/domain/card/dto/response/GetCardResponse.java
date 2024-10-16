@@ -2,10 +2,12 @@ package com.example.trello.domain.card.dto.response;
 
 import com.example.trello.domain.card.entity.Card;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 public class GetCardResponse {
     private Long id;
     private String title;

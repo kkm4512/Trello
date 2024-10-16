@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -74,20 +73,21 @@ public class ListService {
         Integer existingOrderNum = boardList.getOrderNum();
         Integer newOrderNum = requestDto.getOrderNum() != null ? requestDto.getOrderNum() : existingOrderNum;
 
-        if (!existingOrderNum.equals(newOrderNum)) {
+        if (!existingOrderNum.equals(newOrderNum)) { // 만약 리스트를 옮겨서 순서가 변한다면
             List<BoardList> existingLists = listRepository.findByBoardId(boardId);
-            if (existingOrderNum < newOrderNum) {
-                // 순서가 뒤로 갈 때
+            if (existingOrderNum < newOrderNum) { // 리스트를 뒤로 옮길 때
                 existingLists.stream()
+                        // 기존 순서보다 큰 리스트들만 순서를 조정
                         .filter(list -> list.getOrderNum() > existingOrderNum && list.getOrderNum() <= newOrderNum)
                         .forEach(list -> list.updateOrderNum(list.getOrderNum() - 1));
             } else {
-                // 순서가 앞으로 올 때
+                // 리스트를 앞으로 옮길 때
                 existingLists.stream()
-                        .filter(list -> list.getOrderNum() < existingOrderNum && list.getOrderNum() >= newOrderNum)
+                        // 기존 순서보다 앞에 있는 리스트들 중, 새로운 위치로 이동할 리스트까지 순서 조정
+                        .filter(list -> list.getOrderNum() < existingOrderNum && list.getOrderNum() >= newOrderNum) // 기존 미만 신규 이상 자리의 리스트
                         .forEach(list -> list.updateOrderNum(list.getOrderNum() + 1));
             }
-            boardList.updateOrderNum(newOrderNum);
+            boardList.updateOrderNum(newOrderNum); //
         }
 
         boardList.updateTitle(requestDto.getTitle());
@@ -131,7 +131,7 @@ public class ListService {
     }
 
     /**
-     * 보드 리스트 순서 조정 공통 로직
+     * 삭제 후 보드 리스트 순서 조정 공통 로직
      */
     private void adjustOrderAfterDelete(List<BoardList> existingLists, Integer deleteOrderNum) {
         existingLists.stream()
