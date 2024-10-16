@@ -45,6 +45,7 @@ public class SecurityConfig {
                         auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     }
                     auth.requestMatchers("/users/login", "/users").permitAll()
+                            .requestMatchers("/api/test/**").permitAll() // 배포 테스트 전용 임시
                             .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
                             .anyRequest().authenticated();
                 })
