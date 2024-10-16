@@ -36,7 +36,7 @@ jobs:
       - name: aws 배포용 yml 파일 생성
         run: |
           cd ./src/main/resources 
-          echo "${{ secrets.APPLICATION_PROD_YML }}" > ./application.yml
+          echo "${{ secrets.APPLICATION_PROD_YML }}" > ./application-prod.yml
         shell: bash
 
       - name: aws 배포를 위한 application.yml 의 프로필을 prod로 바꿔주기
