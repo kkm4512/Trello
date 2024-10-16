@@ -15,6 +15,7 @@ import com.example.trello.domain.cardmember.entity.CardMember;
 import com.example.trello.domain.cardmember.repository.CardMemberRepository;
 import com.example.trello.domain.list.repository.ListRepository;
 import com.example.trello.domain.member.entity.Member;
+import com.example.trello.domain.member.enums.MemberRole;
 import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
@@ -40,6 +41,11 @@ public class CardMemberService {
     public ApiResponse<SaveCardMemberResponse> saveCardMember(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, SaveCardMemberRequest request) {
         Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
                 () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
+
+        // 읽기 권한인지 확인
+        if (user.getMemberRole() == MemberRole.READ_ONLY) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
 
         boolean authMember = cardMemberRepository.existsByUserIdAndCardId(user.getId(), cardId);
 
@@ -83,6 +89,11 @@ public class CardMemberService {
     public ApiResponse<DeleteCardMemberResponse> deleteCardMember(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId, DeleteCardMemberRequest request) {
         Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
                 () -> new IllegalArgumentException("멤버로 등록되어 있지 않습니다."));
+
+        // 읽기 권한인지 확인
+        if (user.getMemberRole() == MemberRole.READ_ONLY) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
 
         boolean authMember = cardMemberRepository.existsByUserIdAndCardId(user.getId(), cardId);
 
