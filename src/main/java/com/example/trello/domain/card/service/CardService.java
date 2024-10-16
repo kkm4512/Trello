@@ -15,6 +15,8 @@ import com.example.trello.domain.card.dto.response.SaveCardResponse;
 import com.example.trello.domain.card.dto.response.deleteResponse;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
+import com.example.trello.domain.cardmember.dto.MemberInfo;
+import com.example.trello.domain.cardmember.entity.CardMember;
 import com.example.trello.domain.cardmember.repository.CardMemberRepository;
 import com.example.trello.domain.comment.dto.CardCommentInfo;
 import com.example.trello.domain.comment.entity.Comment;
@@ -103,11 +105,14 @@ public class CardService {
         // 카드 가져오기
         Card card = cardOrElseThrow(cardId);
 
+        List<CardMember> members = cardMemberRepository.findByCardId(card.getId());
+        List<MemberInfo> memberInfos = members.stream().map(MemberInfo::new).toList();
+
         List<Comment> comments = commentRepository.findByCardId(card.getId());
         List<CardCommentInfo> commentInfos = comments.stream().map(CardCommentInfo::new).toList();
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
-        ApiResponse<GetCardResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new GetCardResponse(card, commentInfos));
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_GET_OK;
+        ApiResponse<GetCardResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new GetCardResponse(card, memberInfos, commentInfos));
         return apiResponse;
     }
 
@@ -129,7 +134,7 @@ public class CardService {
 
         cardRepository.delete(card);
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SEARCH_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_DELETE_OK;
         ApiResponse<deleteResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new deleteResponse(card));
         return apiResponse;
     }

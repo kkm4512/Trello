@@ -2,6 +2,9 @@ package com.example.trello.domain.attachment.service;
 
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.domain.attachment.repository.AttachmentRepository;
+import com.example.trello.domain.attachment.service.util.AttachmentDirectoryService;
+import com.example.trello.domain.attachment.service.util.AttachmentFileService;
+import com.example.trello.domain.attachment.service.util.AttachmentPathService;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
 import com.example.trello.domain.user.dto.AuthUser;
