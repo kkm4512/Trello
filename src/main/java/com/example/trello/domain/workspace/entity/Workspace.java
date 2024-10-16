@@ -3,7 +3,6 @@ package com.example.trello.domain.workspace.entity;
 import com.example.trello.domain.member.entity.Member;
 import com.example.trello.common.entity.Timestamped;
 import com.example.trello.domain.board.entity.Board;
-import com.example.trello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

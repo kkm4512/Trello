@@ -1,7 +1,11 @@
 package com.example.trello.common.aop;
 
+import com.example.trello.domain.member.dto.request.MemberCreateRequest;
 import com.example.trello.domain.slack.SlackService;
 import com.example.trello.domain.user.dto.AuthUser;
+import com.example.trello.domain.user.entity.User;
+import com.example.trello.domain.user.repository.UserRepository;
+import com.example.trello.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,8 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @RequiredArgsConstructor
 public class AspectModule {
     private final SlackService slackService;
+    private final UserRepository userRepository;
     private final static String SLACK_NOTI_ALL_ROOM = "C07R9380LQ7";
-    // TODO: 멤버 추가하는 메서드로 경로 변경해야함
 
     /**
      * 특정 사용자가 워크스페이스 안에 추가되었을때 slack 알람이 추가되게 하는 AOP
@@ -28,15 +32,15 @@ public class AspectModule {
     @Around("memberAddPointCut()")
     public Object adviceMemberAdd(ProceedingJoinPoint pjp) throws Throwable {
         Object result = pjp.proceed();
-        String name = (String) getArg(pjp);
+        MemberCreateRequest memberCreateRequest = (MemberCreateRequest) getArg(pjp,1);
+        User user = userRepository.findById(memberCreateRequest.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         slackService.sendMessage(
                 SLACK_NOTI_ALL_ROOM,
-                name + "님을 멤버로 추가 하였습니다"
+                user.getEmail() + " 님을 멤버로 추가 하였습니다"
                 );
         return result;
     }
-
-    // TODO: 카드 변경하는 메서드로 경로 변경해야함
 
     /**
      * 카드의 내용이 변경 되었을때,
@@ -56,7 +60,6 @@ public class AspectModule {
     }
 
 
-    // TODO: 댓글 달리는 메서드로 경로 변경해야함
     /**
      * 자신의 카드에 댓글이 달렸 을때
      */
@@ -97,7 +100,7 @@ public class AspectModule {
         return authUser;
     }
 
-    private Object getArg(ProceedingJoinPoint pjp) {
-        return pjp.getArgs()[0];
+    private Object getArg(ProceedingJoinPoint pjp,int order) {
+        return pjp.getArgs()[order];
     }
 }

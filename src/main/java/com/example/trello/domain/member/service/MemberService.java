@@ -1,5 +1,6 @@
 package com.example.trello.domain.member.service;
 
+import com.example.trello.common.annotation.MemberAddSlack;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseMemberEnum;
 import com.example.trello.domain.member.dto.request.MemberCreateRequest;
@@ -28,6 +29,7 @@ public class MemberService {
     private final UserRepository userRepository;
 
     // 멤버 추가
+    @MemberAddSlack
     public ApiResponse<MemberResponse> createMember(Long workspaceId, MemberCreateRequest request) {
         try {
             Workspace workspace = workspaceRepository.findById(workspaceId)

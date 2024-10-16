@@ -1,5 +1,6 @@
 package com.example.trello.domain.attachment.service;
 
+import com.example.trello.common.exception.CardException;
 import com.example.trello.common.exception.FileException;
 import com.example.trello.common.exception.UserException;
 import com.example.trello.common.response.ApiResponse;
@@ -7,6 +8,7 @@ import com.example.trello.common.response.ApiResponseFileEnum;
 import com.example.trello.common.response.ApiResponseUserEnum;
 import com.example.trello.domain.attachment.entity.Attachment;
 import com.example.trello.domain.attachment.repository.AttachmentRepository;
+import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
 import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.user.entity.User;
@@ -24,7 +26,9 @@ import java.util.List;
 
 import static com.example.trello.common.path.GlobalPath.BASE_URL;
 import static com.example.trello.common.path.GlobalPath.SEPARATOR;
+import static com.example.trello.common.response.ApiResponseCardEnum.CARD_NOT_FOUND;
 import static com.example.trello.common.response.ApiResponseFileEnum.*;
+import static com.example.trello.common.response.ApiResponseUserEnum.USER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -45,9 +49,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     public ApiResponse<List<String>> uploads(AuthUser authUser, String card_id, List<MultipartFile> files) {
         List<String> fileNames = new ArrayList<>();
         try {
-            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_NOT_FOUND));
-            //TODO: Card Exception + cardRepositroy에서 찾는것으로 변경 해야함
-//            Card card = cardRepository.findById(Long.parseLong(card_id)).orElseThrow(() -> new UserException(ApiResponseUserEnum.USER_NOT_FOUND));
+            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+            Card card = cardRepository.findById(Long.parseLong(card_id)).orElseThrow(() -> new CardException(CARD_NOT_FOUND));
             Path directory = pathService.mkFilesCardsPath(card_id);
             directoryService.mkdir(directory);
             for ( MultipartFile file : files ) {
@@ -60,11 +63,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                             .path(filePath.toString())
                             .originFileName(file.getOriginalFilename())
                             .user(user)
-                            //TODO: Card로 바꿔야함
-                            .card_id(Long.parseLong(card_id))
+                            .card(card)
                             .build();
                     attachmentRepository.save(attachment);
-                    // inputStream의 자원 누수를 방지하기위한 try - with - resources
                     fileService.mkFile(filePath, file);
                     fileNames.add(file.getOriginalFilename());
                 }
