@@ -1,4 +1,4 @@
-package com.example.trello.domain.attachment.service;
+package com.example.trello.domain.attachment.service.util;
 
 import com.example.trello.common.exception.FileException;
 import org.springframework.stereotype.Service;

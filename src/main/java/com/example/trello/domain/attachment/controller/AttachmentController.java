@@ -2,7 +2,6 @@ package com.example.trello.domain.attachment.controller;
 
 import com.example.trello.common.exception.UserException;
 import com.example.trello.common.response.ApiResponse;
-import static com.example.trello.common.response.ApiResponseUserEnum.USER_NOT_FOUND;
 import com.example.trello.domain.attachment.service.AttachmentService;
 import com.example.trello.domain.attachment.validate.FileValidate;
 import com.example.trello.domain.member.entity.Member;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.example.trello.common.response.ApiResponseUserEnum.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @RestController

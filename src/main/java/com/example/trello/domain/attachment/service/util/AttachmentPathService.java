@@ -1,4 +1,4 @@
-package com.example.trello.domain.attachment.service;
+package com.example.trello.domain.attachment.service.util;
 
 import org.springframework.stereotype.Service;
 
