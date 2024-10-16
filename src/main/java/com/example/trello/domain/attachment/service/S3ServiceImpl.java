@@ -50,7 +50,10 @@ public class S3ServiceImpl implements AttachmentService {
     @Transactional
     @Override
     public ApiResponse<List<String>> uploads(AuthUser authUser, String card_id, List<MultipartFile> files) {
+        List<String> data = new ArrayList<>();
         try {
+            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+            Card card = cardRepository.findById(Long.parseLong(card_id)).orElseThrow(() -> new CardException(CARD_NOT_FOUND));
             for ( MultipartFile file : files ) {
                 String fileName =  FILES +
                         SEPARATOR +
@@ -64,8 +67,7 @@ public class S3ServiceImpl implements AttachmentService {
                 metadata.setContentType(file.getContentType());
                 metadata.setContentLength(file.getSize());
                 amazonS3Client.putObject(bucket,fileName,file.getInputStream(),metadata);
-                User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-                Card card = cardRepository.findById(Long.parseLong(card_id)).orElseThrow(() -> new CardException(CARD_NOT_FOUND));
+
                 Attachment attachment = Attachment.builder()
                         .path(fileName)
                         .originFileName(file.getOriginalFilename())
@@ -73,35 +75,31 @@ public class S3ServiceImpl implements AttachmentService {
                         .card(card)
                         .build();
                 attachmentRepository.save(attachment);
+                data.add(file.getOriginalFilename());
             }
         } catch (Exception e) {
             throw new FileException(ApiResponseFileEnum.FILE_IO_ERROR);
         }
-        List<String> data = new ArrayList<>();
-        return new ApiResponse<>(ApiResponseFileEnum.FILE_OK,data);
+        return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
     }
 
     @Override
     public ApiResponse<List<String>> downloads(String card_id) {
-        List<String> data = new ArrayList<>();
-        List<Attachment> attachments = attachmentRepository.findByCardId(Long.parseLong(card_id));
-        for (Attachment attachment : attachments) {
-            data.add(
-                    S3_BASE_URL + SEPARATOR + attachment.getPath()
-            );
-        }
-        return new ApiResponse<>(ApiResponseFileEnum.FILE_OK,data);
+        List<String> data = attachmentRepository.findByCardId(Long.parseLong(card_id)).stream()
+                .map(attachment -> S3_BASE_URL + SEPARATOR + attachment.getPath() )
+                .toList();
+        return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
     }
 
     @Override
     public ApiResponse<List<String>> deletes(String card_id) {
-        List<String> data = new ArrayList<>();
-        List<Attachment> attachments = attachmentRepository.findByCardId(Long.parseLong(card_id));
-        for ( Attachment attachment : attachments ) {
-            amazonS3Client.deleteObject(bucket,attachment.getPath());
-            attachmentRepository.delete(attachment);
-            data.add(attachment.getOriginFileName());
-        }
-        return new ApiResponse<>(ApiResponseFileEnum.FILE_OK,data);
+        List<String> data = attachmentRepository.findByCardId(Long.parseLong(card_id)).stream()
+                        .peek(attachment -> {
+                                    amazonS3Client.deleteObject(bucket,attachment.getPath());
+                                    attachmentRepository.delete(attachment);
+                        })
+                        .map(Attachment::getOriginFileName)
+                        .toList();
+        return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
     }
 }
