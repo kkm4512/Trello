@@ -7,6 +7,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '!@Skdud340'
       MYSQL_DATABASE: trello
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     restart: always
 
   redis:
