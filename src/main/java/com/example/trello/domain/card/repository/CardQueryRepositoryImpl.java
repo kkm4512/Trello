@@ -2,7 +2,6 @@ package com.example.trello.domain.card.repository;
 
 import com.example.trello.domain.card.dto.request.SearchCardRequest;
 import com.example.trello.domain.card.dto.response.SearchCardResponse;
-import com.example.trello.domain.user.entity.QUser;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 import static com.example.trello.domain.board.entity.QBoard.board;
 import static com.example.trello.domain.card.entity.QCard.card;
 import static com.example.trello.domain.list.entity.QBoardList.boardList;
@@ -28,7 +28,6 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
 
     @Override
     public Page<SearchCardResponse> searchCards(SearchCardRequest request, Pageable pageable) {
-
 
         List<SearchCardResponse> result = queryFactory
                 .select(Projections.fields(SearchCardResponse.class,
@@ -68,7 +67,6 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
                 .fetchOne();
 
         return new PageImpl<>(result, pageable, totalCount);
-
     }
 
     // 보드 번호 검색(보드 번호 있으면 해당 보드 안에서 카드 검색 or 없으면 전체 카드 검색)
