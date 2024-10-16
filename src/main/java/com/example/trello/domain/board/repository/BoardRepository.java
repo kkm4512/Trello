@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    boolean existsById(@NotNull Long id);
-
     List<Board> findAllByWorkspaceId(Long workspaceId);
 
     Optional<Board> findByIdAndWorkspaceId(Long boardId, Long workspaceId);

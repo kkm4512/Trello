@@ -102,6 +102,7 @@ public class CardService {
     }
 
     /* 카드 삭제 */
+    @Transactional
     public ApiResponse<deleteResponse> deleteCard(Long workspaceId, Long boardsId, Long listId, Long cardId) {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
