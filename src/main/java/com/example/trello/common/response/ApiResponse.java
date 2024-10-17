@@ -29,6 +29,11 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
+    // 상태코드, 메세지만 반환시 사용 (서비스 -> 컨트롤러)
+    public static <T> ApiResponse<T> of(ApiResponseEnum apiResponseEnum) {
+        return new ApiResponse<>(apiResponseEnum);
+    }
+
     // 데이터, 상태코드, 메세지만 반환시 사용 (서비스 -> 컨트롤러)
     public static <T> ApiResponse<T> of(ApiResponseEnum apiResponseEnum, T data) {
         return new ApiResponse<>(apiResponseEnum,data);

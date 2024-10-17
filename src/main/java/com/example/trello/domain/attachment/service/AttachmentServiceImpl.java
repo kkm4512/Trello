@@ -80,7 +80,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public ApiResponse<List<String>> downloads(String card_id) {
+    public ApiResponse<List<String>> downloads(String card_id, List<String> filaNames) {
         List<String> data = new ArrayList<>();
         try {
             Path path = pathService.mkFilesCardsPath(card_id);
@@ -100,7 +100,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public ApiResponse<List<String>> deletes(String card_id) {
+    public ApiResponse<List<String>> deletes(String card_id,List<String> fileNames) {
         try {
             Path path = pathService.mkFilesCardsPath(card_id);
             List<String> data = Files.list(path)

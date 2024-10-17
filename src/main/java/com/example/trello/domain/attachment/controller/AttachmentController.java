@@ -28,9 +28,10 @@ public class AttachmentController {
 
     @GetMapping("/{card_id}/files")
     public ResponseEntity<ApiResponse<List<String>>> getAttachment(
-            @PathVariable String card_id
+            @PathVariable String card_id,
+            @RequestParam List<String> fileNames
     ) {
-        ApiResponse<List<String>> apiResponse = attachmentService.downloads(card_id);
+        ApiResponse<List<String>> apiResponse = attachmentService.downloads(card_id,fileNames);
         return ApiResponse.of(apiResponse);
     }
 
@@ -54,9 +55,10 @@ public class AttachmentController {
 
     @DeleteMapping("/{card_id}/files")
     public ResponseEntity<ApiResponse<List<String>>> deletes(
-            @PathVariable String card_id
+            @PathVariable String card_id,
+            @RequestParam List<String> fileNames
     ) {
-        ApiResponse<List<String>> apiResponse = attachmentService.deletes(card_id);
+        ApiResponse<List<String>> apiResponse = attachmentService.deletes(card_id,fileNames);
         return ApiResponse.of(apiResponse);
     }
 }
