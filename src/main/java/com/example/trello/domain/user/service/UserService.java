@@ -46,7 +46,7 @@ public class UserService {
         validateDuplicateEmail(email);
 
         //관리자 권한 검증
-        validateAdminToken(userRequest, role);
+        role =validateAdminToken(userRequest, role);
 
         User user = new User(userRequest,role, password);
         User savedUser = userRepository.save(user);
@@ -141,13 +141,14 @@ public class UserService {
         }
     }
 
-    public void validateAdminToken(UserRequestDto userRequest, UserRole role) {
+    public UserRole validateAdminToken(UserRequestDto userRequest, UserRole role) {
         if (userRequest.isAdmin()) {
             if (!ADMIN_TOKEN.equals(userRequest.getAdminToken())) {
                 throw new UserException(ApiResponseUserEnum.USER_ADMINTOKEN_ERROR);
             }
             role = UserRole.ADMIN;
         }
+        return role;
     }
 
     public User validateLoginEmail(String email){
