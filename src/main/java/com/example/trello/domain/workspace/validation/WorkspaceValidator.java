@@ -21,7 +21,7 @@ public class WorkspaceValidator {
 
     private static final SimpleGrantedAuthority ADMIN_AUTHORITY = new SimpleGrantedAuthority(UserRole.Authority.ADMIN);
 
-    // 유저 정보가 없거나 유저 아이디가 없는 경우 예외 처리
+    // 유저 정보가 없거나 유저 아이디가 없는 경우 예외
     public void validateAuthUser(AuthUser authUser) {
         if (authUser == null || authUser.getId() == null) {
             throw new WorkspaceException(ApiResponseWorkspaceEnum.USER_NOT_FOUND);
