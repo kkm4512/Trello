@@ -59,14 +59,12 @@ public class CardMemberService {
         for (Long id : request.getMemberId()) {
             Member member = memberRepository.findByUserId(id).orElseThrow(
                     () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
-            String email = userRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저의 이메일을 찾을 수 없습니다.")).getEmail();
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.save(cardMember);
-            members.add(new MemberInfo(member.getId(), email));
+            members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<SaveCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new SaveCardMemberResponse(members));
         return apiResponse;
     }
@@ -90,14 +88,12 @@ public class CardMemberService {
         List<MemberInfo> members = new ArrayList<>();
         for (Long id : request.getMemberId()) {
             Member member = memberOrElseThrow(id);
-            String email = userRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저의 이메일을 찾을 수 없습니다.")).getEmail();
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.delete(cardMember);
-            members.add(new MemberInfo(member.getId(), email));
+            members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_DELETE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<DeleteCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCardMemberResponse(members));
         return apiResponse;
     }

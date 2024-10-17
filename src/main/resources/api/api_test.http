@@ -212,7 +212,6 @@ Content-Type: application/json
 DELETE {{baseUrl}}/workspaces/1/boards/1
 Content-Type: application/json
 
-
 ### 리스트 생성
 POST {{baseUrl}}/workspaces/1/boards/1/lists
 Content-Type: application/json
@@ -230,3 +229,6 @@ Content-Type: application/json
   "description": "카드 설명"
 }
 
+### 카드 목록 조회
+GET {{baseUrl}}/workspaces/1/boards/1/lists/1/cards/1
+Content-Type: application/json
