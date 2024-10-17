@@ -21,7 +21,7 @@ public class TestController {
     @Operation(summary = "테스트 API", description = "테스트 API")
     @GetMapping
     public String test(){
-        return "Hello World!";
+        return "사랑합니다 여러분 !";
     }
 
     // ApiResponse 테스트 예제
