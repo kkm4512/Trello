@@ -316,7 +316,7 @@ POST http://localhost:8080/workspaces/{workspaceId}/members
 ```http
 POST http://localhost:8080/workspaces/2/members
 {
-  "userId": 2
+  "email": "a233456@gmail.com"
 }
 ```
 #### Response Example
