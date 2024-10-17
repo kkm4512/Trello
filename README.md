@@ -492,7 +492,7 @@ GET http://localhost:8080/workspaces/2/boards
 ***  
 ### 보드 단건 조회
 ```http
-GET http://localhost:8080/workspaces/{workspaceId}/boards/{boardId}
+GET http://localhost:8080/workspaces/{workspaceId}/boards/{boardId}
 ```
 #### Request Field 
 | Parameter | Type     |Description                 |
