@@ -30,4 +30,15 @@ public enum ApiResponseBoardEnum implements ApiResponseEnum {
         this.code = httpStatus.value();
         this.message = message;
     }
+
+    @Override
+    public int getCode() {
+        return code;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
 }

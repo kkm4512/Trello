@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService {
         // 관리자가 맞는지 확인 (WORKSPACE_ADMIN)
         memberValidator.validateWorkspaceAdmin(adminId, workspaceId);
 
-        memberValidator.validateDeleteRequest(workspaceId, memberId);
+        memberValidator.validateDeleteRequest(workspaceId, memberId, adminId);
 
         Member member = memberRepository.findByIdAndWorkspaceId(memberId, workspaceId)
                 .orElseThrow(() -> new MemberException(ApiResponseMemberEnum.MEMBER_NOT_FOUND));
