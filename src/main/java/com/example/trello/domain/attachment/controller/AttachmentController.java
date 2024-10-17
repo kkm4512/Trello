@@ -2,7 +2,6 @@ package com.example.trello.domain.attachment.controller;
 
 import com.example.trello.common.exception.UserException;
 import com.example.trello.common.response.ApiResponse;
-import static com.example.trello.common.response.ApiResponseUserEnum.USER_NOT_FOUND;
 import com.example.trello.domain.attachment.service.AttachmentService;
 import com.example.trello.domain.attachment.validate.FileValidate;
 import com.example.trello.domain.member.entity.Member;
@@ -17,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.example.trello.common.response.ApiResponseUserEnum.USER_NOT_FOUND;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j(topic = "AttachmentController")
@@ -27,9 +28,10 @@ public class AttachmentController {
 
     @GetMapping("/{card_id}/files")
     public ResponseEntity<ApiResponse<List<String>>> getAttachment(
-            @PathVariable String card_id
+            @PathVariable String card_id,
+            @RequestParam List<String> fileNames
     ) {
-        ApiResponse<List<String>> apiResponse = attachmentService.downloads(card_id);
+        ApiResponse<List<String>> apiResponse = attachmentService.downloads(card_id,fileNames);
         return ApiResponse.of(apiResponse);
     }
 
@@ -53,9 +55,10 @@ public class AttachmentController {
 
     @DeleteMapping("/{card_id}/files")
     public ResponseEntity<ApiResponse<List<String>>> deletes(
-            @PathVariable String card_id
+            @PathVariable String card_id,
+            @RequestParam List<String> fileNames
     ) {
-        ApiResponse<List<String>> apiResponse = attachmentService.deletes(card_id);
+        ApiResponse<List<String>> apiResponse = attachmentService.deletes(card_id,fileNames);
         return ApiResponse.of(apiResponse);
     }
 }

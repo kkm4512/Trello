@@ -3,6 +3,7 @@ package com.example.trello.domain.comment.service;
 import com.example.trello.common.annotation.CommentAddSlack;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
+import com.example.trello.common.response.ApiResponseCommentEnum;
 import com.example.trello.common.response.ApiResponseEnum;
 import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.card.dto.request.SaveCardRequest;
@@ -54,7 +55,7 @@ public class CommentService {
         Comment comment = new Comment(request, card, user.getUser());
         commentRepository.save(comment);
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCommentEnum.COMMENT_SAVE_OK;
         ApiResponse<SaveCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new SaveCommentResponse(comment, card));
         return apiResponse;
     }
@@ -78,7 +79,7 @@ public class CommentService {
 
         comment.update(request);
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCommentEnum.COMMENT_UPDATE_OK;
         ApiResponse<PutCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new PutCommentResponse(comment, card));
         return apiResponse;
     }
@@ -99,7 +100,7 @@ public class CommentService {
 
         commentRepository.delete(comment);
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCommentEnum.COMMENT_DELETE_OK;
         ApiResponse<DeleteCommentResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCommentResponse(comment));
         return apiResponse;
     }
@@ -147,19 +148,8 @@ public class CommentService {
 
     /* 워크스페이스, 보더, 리스트, 카드 유무 확인 */
     private void check_All_In_One(Long workspaceId, Long boardsId, Long listId, Long cardId) {
-        boolean isWorkspace = workspaceRepository.existsById(workspaceId);
-        boolean isBoard = boardRepository.existsById(boardsId);
-        boolean list = listRepository.existsById(listId);
+        validateWorkspaceAndBoardAndList(workspaceId, boardsId, listId);
         boolean card = cardRepository.existsById(cardId);
-        if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
-        }
-        if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
-        }
-        if (!list) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
-        }
         if (!card) {
             throw new IllegalArgumentException("해당 카드가 없습니다.");
         }

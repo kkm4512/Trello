@@ -7,6 +7,9 @@ import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseFileEnum;
 import com.example.trello.domain.attachment.entity.Attachment;
 import com.example.trello.domain.attachment.repository.AttachmentRepository;
+import com.example.trello.domain.attachment.service.util.AttachmentDirectoryService;
+import com.example.trello.domain.attachment.service.util.AttachmentFileService;
+import com.example.trello.domain.attachment.service.util.AttachmentPathService;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
 import com.example.trello.domain.user.dto.AuthUser;
@@ -77,7 +80,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public ApiResponse<List<String>> downloads(String card_id) {
+    public ApiResponse<List<String>> downloads(String card_id, List<String> filaNames) {
         List<String> data = new ArrayList<>();
         try {
             Path path = pathService.mkFilesCardsPath(card_id);
@@ -97,7 +100,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public ApiResponse<List<String>> deletes(String card_id) {
+    public ApiResponse<List<String>> deletes(String card_id,List<String> fileNames) {
         try {
             Path path = pathService.mkFilesCardsPath(card_id);
             List<String> data = Files.list(path)

@@ -11,7 +11,8 @@ public class GlobalPath {
     public static final String HTTPS = "https";
     public static final String HOST = "localhost";
     public static final String PORT = "8080";
-    public static final String FILE = "/file";
+    public static final String FILES = "files";
     // http://localhost:8080
     public static final String BASE_URL = HTTP + SEMICOLON  + SEPARATOR + SEPARATOR + HOST + SEMICOLON + PORT;
+    public static final String S3_BASE_URL = "https://spring-trello-files.s3.ap-northeast-2.amazonaws.com";
 }

@@ -2,6 +2,7 @@ package com.example.trello.domain.cardmember.service;
 
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
+import com.example.trello.common.response.ApiResponseCardMemberEnum;
 import com.example.trello.common.response.ApiResponseEnum;
 import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.card.entity.Card;
@@ -58,10 +59,10 @@ public class CardMemberService {
                     () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.save(cardMember);
-            members.add(new MemberInfo(member.getId(), member.getEmail()));
+            members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_SAVE_OK;
         ApiResponse<SaveCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new SaveCardMemberResponse(members));
         return apiResponse;
     }
@@ -87,10 +88,10 @@ public class CardMemberService {
             Member member = memberOrElseThrow(id);
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.delete(cardMember);
-            members.add(new MemberInfo(member.getId(), member.getEmail()));
+            members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_DELETE_OK;
         ApiResponse<DeleteCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCardMemberResponse(members));
         return apiResponse;
     }

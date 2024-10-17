@@ -2,6 +2,9 @@ package com.example.trello.domain.attachment.service;
 
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.domain.attachment.repository.AttachmentRepository;
+import com.example.trello.domain.attachment.service.util.AttachmentDirectoryService;
+import com.example.trello.domain.attachment.service.util.AttachmentFileService;
+import com.example.trello.domain.attachment.service.util.AttachmentPathService;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
 import com.example.trello.domain.user.dto.AuthUser;
@@ -93,12 +96,13 @@ class AttachmentServiceImplTest {
             // given - 변수 정의
             String expectedMessage = "파일 작업 요청에 성공 하였습니다";
             String card_id = "1";
+            List<String> filaNames = List.of("test.jpg","test1.jpg","test2.jpg","test3.jpg");
 
             // given - 행동 정의
             given(pathService.mkFilesCardsPath(anyString())).willReturn(tempDir);
 
             // when
-            ApiResponse<List<String>> actual = attachmentService.downloads(card_id);
+            ApiResponse<List<String>> actual = attachmentService.downloads(card_id,filaNames);
 
             // then
             assertEquals(
@@ -116,12 +120,13 @@ class AttachmentServiceImplTest {
             // given
             String expectedMessage = "파일 작업 요청에 성공 하였습니다";
             String card_id = "1";
+            List<String> filaNames = List.of("test.jpg","test1.jpg","test2.jpg","test3.jpg");
 
             // given - 행동 정의
             given(pathService.mkFilesCardsPath(anyString())).willReturn(tempDir);
 
             // when
-            ApiResponse<List<String>> actual = attachmentService.deletes(card_id);
+            ApiResponse<List<String>> actual = attachmentService.deletes(card_id,filaNames);
 
             // then
             assertEquals(
