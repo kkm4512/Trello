@@ -226,7 +226,7 @@ Content-Type: application/json
 
 {
   "title": "카드 제목",
-  "description": "카드 설명"
+  "content": "카드 설명"
 }
 
 ### 카드 목록 조회
