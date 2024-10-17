@@ -1,6 +1,9 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=Trello)
-- 한 줄 정리 : 
-- 내용 :
+# 소개
+이 애플리케이션은 사용자가 커스터마이징 가능한 보드, 작업 그룹, 세부 작업 항목을 생성할 수 있는 프로젝트 및 작업 관리 플랫폼입니다. 
+실시간 협업 기능을 강화하여 공유 작업 공간, 실시간 업데이트, 작업 내 통신 채널을 제공합니다. 
+사용자 인증 시스템은 로그인 처리뿐만 아니라 세부적인 권한 제어를 구현하여, 관리자가 작업 및 보드에 대한 특정 권한을 가진 맞춤형 역할을 할당할 수 있습니다.
+또한, 사용자에게 Slack을 통해 알림을 전송됩니다. 더 나아가, 프로젝트 진행 상황 및 팀 생산성을 추적할 수 있는 분석 할수 있습니다.
 
 # 🚀 STACK 
 **Environment**
@@ -20,6 +23,11 @@
 ![SQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Gradle](https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+
+**Communication**
+
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
 
 # 🤔 Authors
 
