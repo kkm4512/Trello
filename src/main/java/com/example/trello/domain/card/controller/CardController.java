@@ -5,11 +5,7 @@ import com.example.trello.common.response.ApiResponse;
 import com.example.trello.domain.card.dto.request.PutCardRequest;
 import com.example.trello.domain.card.dto.request.SaveCardRequest;
 import com.example.trello.domain.card.dto.request.SearchCardRequest;
-import com.example.trello.domain.card.dto.response.SearchCardResponse;
-import com.example.trello.domain.card.dto.response.GetCardResponse;
-import com.example.trello.domain.card.dto.response.PutCardResponse;
-import com.example.trello.domain.card.dto.response.SaveCardResponse;
-import com.example.trello.domain.card.dto.response.deleteResponse;
+import com.example.trello.domain.card.dto.response.*;
 import com.example.trello.domain.card.service.CardService;
 import com.example.trello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/workspaces/{workspaceId}/boards/{boardsId}/lists/{listId}")
@@ -84,5 +83,16 @@ public class CardController {
         ApiResponse<Page<SearchCardResponse>> apiResponse = cardService.searchCard(workspaceId, boardsId, request, page, size);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
+
+    @GetMapping("/cards/ranking")
+    public ResponseEntity<ApiResponse<List<CardRankResponse>>> getCardRanking(
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardsId,
+            @PathVariable Long listId
+    ) {
+        ApiResponse<List<CardRankResponse>> apiResponse = cardService.getTopRankedCards();
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
+    }
+
 
 }
