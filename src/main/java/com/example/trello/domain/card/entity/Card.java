@@ -1,6 +1,7 @@
 package com.example.trello.domain.card.entity;
 
 import com.example.trello.common.entity.Timestamped;
+import com.example.trello.domain.attachment.entity.Attachment;
 import com.example.trello.domain.card.dto.request.PutCardRequest;
 import com.example.trello.domain.card.dto.request.SaveCardRequest;
 import com.example.trello.domain.cardmember.entity.CardMember;
@@ -26,7 +27,7 @@ public class Card extends Timestamped {
     private String content;
 
 
-//  @ManyToOne(fetch = FetchType.LAZY)
+    //  @ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
@@ -37,6 +38,9 @@ public class Card extends Timestamped {
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardMember> cardManagers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments = new ArrayList<>();
 
     public Card(SaveCardRequest request, BoardList list, Member user) {
         this.title = request.getTitle();
