@@ -8,7 +8,7 @@ import com.example.trello.domain.board.dto.response.BoardResponse;
 import com.example.trello.domain.board.dto.response.BoardWithListsResponse;
 import com.example.trello.domain.board.entity.Board;
 import com.example.trello.domain.board.repository.BoardRepository;
-import com.example.trello.domain.board.Validation.BoardValidator;
+import com.example.trello.domain.board.validation.BoardValidator;
 import com.example.trello.domain.workspace.entity.Workspace;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import com.example.trello.domain.member.repository.MemberRepository;
@@ -32,12 +32,14 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
     private final BoardValidator boardValidator;
 
+    // 보드 생성
     @Transactional
     @Override
     public ApiResponse<BoardResponse> createBoard(Long workspaceId, Long memberId, BoardRequest request) {
-        // 권한 및 유효성 검사
+
+        boardValidator.validateMemberInWorkspace(memberId, workspaceId);
+
         boardValidator.validateAdminOrMemberRole(memberId, workspaceId);
-        boardValidator.validateCreateRequest(request);
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new BoardException(ApiResponseBoardEnum.WORKSPACE_NOT_FOUND));
@@ -52,12 +54,14 @@ public class BoardServiceImpl implements BoardService {
         return ApiResponse.of(ApiResponseBoardEnum.BOARD_CREATE_SUCCESS, response);
     }
 
+    // 보드 수정
     @Transactional
     @Override
     public ApiResponse<BoardResponse> updateBoard(Long workspaceId, Long boardId, Long memberId, BoardRequest request) {
-        // 권한 및 유효성 검사
+
+        boardValidator.validateMemberInWorkspace(memberId, workspaceId);
+
         boardValidator.validateAdminOrMemberRole(memberId, workspaceId);
-        boardValidator.validateUpdateRequest(request);
 
         Board board = boardRepository.findByIdAndWorkspaceId(boardId, workspaceId)
                 .orElseThrow(() -> new BoardException(ApiResponseBoardEnum.BOARD_NOT_FOUND));
@@ -70,10 +74,11 @@ public class BoardServiceImpl implements BoardService {
         return ApiResponse.of(ApiResponseBoardEnum.BOARD_UPDATE_SUCCESS, response);
     }
 
+    // 보드 조회
     @Transactional(readOnly = true)
     @Override
     public ApiResponse<List<BoardResponse>> getBoards(Long workspaceId, Long memberId) {
-        // 멤버 역할 확인
+
         boardValidator.validateMemberInWorkspace(memberId, workspaceId);
 
         List<Board> boards = boardRepository.findAllByWorkspaceId(workspaceId);
@@ -84,10 +89,11 @@ public class BoardServiceImpl implements BoardService {
         return ApiResponse.of(ApiResponseBoardEnum.BOARD_READ_SUCCESS, responses);
     }
 
+    // 보드 조회 (보드와 리스트)
     @Transactional(readOnly = true)
     @Override
     public ApiResponse<BoardWithListsResponse> getBoardWithLists(Long workspaceId, Long boardId, Long memberId) {
-        // 멤버 역할 확인
+
         boardValidator.validateMemberInWorkspace(memberId, workspaceId);
 
         Board board = boardRepository.findByIdAndWorkspaceId(boardId, workspaceId)
@@ -102,7 +108,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ApiResponse<Void> deleteBoard(Long workspaceId, Long boardId, Long memberId) {
 
-        boardValidator.validateAdminRole(memberId, workspaceId);
+        boardValidator.validateMemberInWorkspace(memberId, workspaceId);
+
+        boardValidator.validateAdminOrMemberRole(memberId, workspaceId);
 
         Board board = boardRepository.findByIdAndWorkspaceId(boardId, workspaceId)
                 .orElseThrow(() -> new BoardException(ApiResponseBoardEnum.BOARD_NOT_FOUND));

@@ -9,6 +9,7 @@ import com.example.trello.domain.member.service.MemberService;
 import com.example.trello.domain.user.dto.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,11 +25,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Operation(summary = "멤버 추가", description = "워크스페이스에 멤버를 추가합니다. WORK_SPACE_ADMIN 역할을 가진 계정만 멤버 추가가 가능합니다.")
+    @Operation(summary = "멤버 생성", description = "워크스페이스에 멤버를 생성합니다. WORK_SPACE_ADMIN 역할을 가진 계정만 멤버 추가가 가능합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<MemberResponse>> createMember(
             @PathVariable Long workspaceId,
-            @RequestBody MemberCreateRequest request,
+            @Valid @RequestBody MemberCreateRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
         ApiResponse<MemberResponse> apiResponse = memberService.createMember(workspaceId, request, authUser.getId());

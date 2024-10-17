@@ -139,7 +139,7 @@ POST {{baseUrl}}/workspaces/1/members
 Content-Type: application/json
 
 {
-  "userId": 2
+  "email" : "admin2@example.com"
 }
 
 ### 멤버 목록 조회
@@ -175,7 +175,7 @@ PUT {{baseUrl}}/workspaces/1/members/2
 Content-Type: application/json
 
 {
-  "memberRole": "WORKSPACE_MEMBER"
+  "memberRole": "WORKSPACE_ADMIN"
 }
 
 ### 멤버 삭제

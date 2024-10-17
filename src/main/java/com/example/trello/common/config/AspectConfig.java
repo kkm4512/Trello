@@ -1,6 +1,7 @@
 package com.example.trello.common.config;
 
 import com.example.trello.common.aop.AspectModule;
+import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.slack.SlackService;
 import com.example.trello.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,6 @@ public class AspectConfig {
 
     @Bean
     public AspectModule aspectModule() {
-        return new AspectModule(slackService,userRepository);
+        return new AspectModule(slackService, userRepository);
     }
 }

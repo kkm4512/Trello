@@ -1,6 +1,7 @@
 package com.example.trello.domain.member.repository;
 
 import com.example.trello.domain.member.entity.Member;
+import com.example.trello.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
