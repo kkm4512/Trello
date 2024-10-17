@@ -81,7 +81,7 @@ public class CardMemberService {
             members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_SAVE_OK;
         ApiResponse<SaveCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new SaveCardMemberResponse(members));
         return apiResponse;
     }
@@ -115,7 +115,7 @@ public class CardMemberService {
             members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_DELETE_OK;
         ApiResponse<DeleteCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCardMemberResponse(members));
         return apiResponse;
     }
