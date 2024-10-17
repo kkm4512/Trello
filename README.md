@@ -1039,7 +1039,7 @@ DELETE http://localhost:8080/workspaces/2/boards/2/lists/1/cards/1/comments/1
 ```
 ***
 
-##File Upload
+## File Upload
 ### 사진 업로드
 ```http
 POST http://localhost:8080/api/cards/{card_id}/files
