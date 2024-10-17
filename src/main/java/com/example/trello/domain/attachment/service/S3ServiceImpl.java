@@ -75,6 +75,7 @@ public class S3ServiceImpl implements AttachmentService {
 
     @Override
     public ApiResponse<List<String>> downloads(String card_id,List<String> fileNames) {
+        long start = System.currentTimeMillis();
         List<String> data = new ArrayList<>();
         try {
             List<Attachment> attachments = attachmentRepository.findByCardId(Long.parseLong(card_id));
@@ -87,6 +88,9 @@ public class S3ServiceImpl implements AttachmentService {
             }
         } catch (Exception e) {
             log.error(e.getMessage(),e);
+        } finally {
+            long end = System.currentTimeMillis();
+            System.out.println(end - start);
         }
 
         return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
