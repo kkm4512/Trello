@@ -7,6 +7,9 @@ import com.example.trello.common.response.ApiResponseEnum;
 import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
+import com.example.trello.domain.cardlog.entity.CardLog;
+import com.example.trello.domain.cardlog.enums.MemberChangeStatus;
+import com.example.trello.domain.cardlog.repository.CardLogRepository;
 import com.example.trello.domain.cardmember.dto.MemberInfo;
 import com.example.trello.domain.cardmember.dto.request.DeleteCardMemberRequest;
 import com.example.trello.domain.cardmember.dto.request.SaveCardMemberRequest;
@@ -36,6 +39,7 @@ public class CardMemberService {
     private final BoardRepository boardRepository;
     private final ListRepository listRepository;
     private final CardRepository cardRepository;
+    private final CardLogRepository cardLogRepository;
 
     /* 카드 멤버 추가 */
     @Transactional
@@ -58,6 +62,11 @@ public class CardMemberService {
             Member member = memberRepository.findByUserId(id).orElseThrow(
                     () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
             CardMember cardMember = new CardMember(card, member);
+
+            // 카드 담당자 추가관련 로그데이터 저장
+            CardLog cardLog = new CardLog(user, member, card, MemberChangeStatus.ADD);
+            cardLogRepository.save(cardLog);
+
             cardMemberRepository.save(cardMember);
             members.add(new MemberInfo(cardMember));
         }
@@ -87,6 +96,11 @@ public class CardMemberService {
         for (Long id : request.getMemberId()) {
             Member member = memberOrElseThrow(id);
             CardMember cardMember = new CardMember(card, member);
+
+            // 카드 담당자 삭제관련 로그데이터 저장
+            CardLog cardLog = new CardLog(user, member, card, MemberChangeStatus.DELETE);
+            cardLogRepository.save(cardLog);
+
             cardMemberRepository.delete(cardMember);
             members.add(new MemberInfo(cardMember));
         }
