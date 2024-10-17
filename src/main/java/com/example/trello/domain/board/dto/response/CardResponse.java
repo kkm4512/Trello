@@ -1,5 +1,4 @@
-// MemberResponse.java (DTO 응답)
-package com.example.trello.domain.member.dto.response;
+package com.example.trello.domain.board.dto.response;
 
 import lombok.*;
 
@@ -10,11 +9,10 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberResponse {
+public class CardResponse {
     private Long id;
-    private Long workspaceId;
-    private Long userId;
-    private String memberRole;
+    private String title;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

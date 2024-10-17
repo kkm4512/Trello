@@ -1,16 +1,14 @@
 package com.example.trello.domain.board.entity;
 
-
-import com.example.trello.domain.workspace.entity.Workspace;
 import com.example.trello.domain.list.entity.BoardList;
+import com.example.trello.domain.workspace.entity.Workspace;
 import com.example.trello.common.entity.Timestamped;
-import com.example.trello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -29,12 +27,12 @@ public class Board extends Timestamped {
     @Column(nullable = false, length = 7)
     private String backgroundColor;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoardList> boardLists;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
-
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardList> boardLists = new ArrayList<>();
 
     public void setTitle(String title) {
         this.title = title;

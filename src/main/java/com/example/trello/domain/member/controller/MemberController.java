@@ -6,15 +6,14 @@ import com.example.trello.domain.member.dto.request.MemberUpdateRequest;
 import com.example.trello.domain.member.dto.response.MemberListResponse;
 import com.example.trello.domain.member.dto.response.MemberResponse;
 import com.example.trello.domain.member.service.MemberService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.trello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Member", description = "멤버 API")
 @RestController
 @RequestMapping("/workspaces/{workspaceId}/members")
 @RequiredArgsConstructor
@@ -22,38 +21,43 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Operation(summary = "멤버 생성", description = "워크스페이스에 멤버를 생성합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<MemberResponse>> createMember(
             @PathVariable Long workspaceId,
-            @RequestBody MemberCreateRequest request) {
-        ApiResponse<MemberResponse> response = memberService.createMember(workspaceId, request);
-        return ApiResponse.of(response);
+            @RequestBody MemberCreateRequest request,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        ApiResponse<MemberResponse> apiResponse = memberService.createMember(workspaceId, request, authUser.getId());
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
-    @Operation(summary = "멤버 조회", description = "워크스페이스의 멤버 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<ApiResponse<List<MemberListResponse>>> getMembers(@PathVariable Long workspaceId) {
-        ApiResponse<List<MemberListResponse>> response = memberService.getMembers(workspaceId);
-        return ApiResponse.of(response);
+    public ResponseEntity<ApiResponse<List<MemberListResponse>>> getMembers(
+            @PathVariable Long workspaceId,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        ApiResponse<List<MemberListResponse>> apiResponse = memberService.getMembers(workspaceId, authUser.getId());
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
-    @Operation(summary = "멤버 수정", description = "워크스페이스의 멤버 역할을 수정합니다.")
     @PutMapping("/{memberId}")
     public ResponseEntity<ApiResponse<MemberResponse>> updateMemberRole(
             @PathVariable Long workspaceId,
             @PathVariable Long memberId,
-            @RequestBody MemberUpdateRequest request) {
-        ApiResponse<MemberResponse> response = memberService.updateMemberRole(workspaceId, memberId, request);
-        return ApiResponse.of(response);
+            @RequestBody MemberUpdateRequest request,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        ApiResponse<MemberResponse> apiResponse = memberService.updateMemberRole(workspaceId, memberId, request, authUser.getId());
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
-    @Operation(summary = "멤버 삭제", description = "워크스페이스의 멤버를 삭제합니다.")
     @DeleteMapping("/{memberId}")
     public ResponseEntity<ApiResponse<Void>> deleteMember(
             @PathVariable Long workspaceId,
-            @PathVariable Long memberId) {
-        ApiResponse<Void> response = memberService.deleteMember(workspaceId, memberId);
-        return ApiResponse.of(response);
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        ApiResponse<Void> apiResponse = memberService.deleteMember(workspaceId, memberId, authUser.getId());
+        return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 }

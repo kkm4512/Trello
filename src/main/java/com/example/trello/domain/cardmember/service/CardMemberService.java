@@ -22,6 +22,7 @@ import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.member.enums.MemberRole;
 import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.dto.AuthUser;
+import com.example.trello.domain.user.repository.UserRepository;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import java.util.List;
 public class CardMemberService {
     private final CardMemberRepository cardMemberRepository;
     private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
     private final BoardRepository boardRepository;
     private final ListRepository listRepository;
@@ -71,7 +73,7 @@ public class CardMemberService {
             members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_SAVE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<SaveCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new SaveCardMemberResponse(members));
         return apiResponse;
     }
@@ -105,7 +107,7 @@ public class CardMemberService {
             members.add(new MemberInfo(cardMember));
         }
 
-        ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_DELETE_OK;
+        ApiResponseEnum apiResponseEnum = ApiResponseCardEnum.CARD_SAVE_OK;
         ApiResponse<DeleteCardMemberResponse> apiResponse = new ApiResponse<>(apiResponseEnum, new DeleteCardMemberResponse(members));
         return apiResponse;
     }

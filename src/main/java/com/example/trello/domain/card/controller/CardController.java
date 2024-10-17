@@ -31,7 +31,7 @@ public class CardController {
             @PathVariable Long boardsId,
             @PathVariable Long listId,
             @RequestBody SaveCardRequest request
-            ) {
+    ) {
         ApiResponse<SaveCardResponse> apiResponse = cardService.saveCard(authUser, workspaceId, boardsId, listId, request);
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }

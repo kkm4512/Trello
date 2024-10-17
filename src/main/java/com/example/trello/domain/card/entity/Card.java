@@ -27,7 +27,7 @@ public class Card extends Timestamped {
     private String content;
 
 
-//  @ManyToOne(fetch = FetchType.LAZY)
+    //  @ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
