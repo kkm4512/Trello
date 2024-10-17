@@ -240,7 +240,7 @@ GET http://localhost:8080/workspaces
 
 ### 워크스페이스 수정
 ```http
-PUT http://localhost:8080/{workspacesId}
+PUT http://localhost:8080/workspaces/{workspacesId}
 ```
 #### Request Field 
 | Parameter | Type     |Description                 |
@@ -252,7 +252,7 @@ PUT http://localhost:8080/{workspacesId}
 
 #### Request Example
 ```http
-PUT http://localhost:8080/1
+PUT http://localhost:8080/workspaces/1
 {
   "title": "editTitle",
   "description": "editDescription"
