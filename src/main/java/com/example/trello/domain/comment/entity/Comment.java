@@ -19,7 +19,7 @@ public class Comment extends Timestamped {
     private Long id;
     private String comment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

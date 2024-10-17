@@ -96,12 +96,13 @@ class AttachmentServiceImplTest {
             // given - 변수 정의
             String expectedMessage = "파일 작업 요청에 성공 하였습니다";
             String card_id = "1";
+            List<String> filaNames = List.of("test.jpg","test1.jpg","test2.jpg","test3.jpg");
 
             // given - 행동 정의
             given(pathService.mkFilesCardsPath(anyString())).willReturn(tempDir);
 
             // when
-            ApiResponse<List<String>> actual = attachmentService.downloads(card_id);
+            ApiResponse<List<String>> actual = attachmentService.downloads(card_id,filaNames);
 
             // then
             assertEquals(
@@ -119,12 +120,13 @@ class AttachmentServiceImplTest {
             // given
             String expectedMessage = "파일 작업 요청에 성공 하였습니다";
             String card_id = "1";
+            List<String> filaNames = List.of("test.jpg","test1.jpg","test2.jpg","test3.jpg");
 
             // given - 행동 정의
             given(pathService.mkFilesCardsPath(anyString())).willReturn(tempDir);
 
             // when
-            ApiResponse<List<String>> actual = attachmentService.deletes(card_id);
+            ApiResponse<List<String>> actual = attachmentService.deletes(card_id,filaNames);
 
             // then
             assertEquals(

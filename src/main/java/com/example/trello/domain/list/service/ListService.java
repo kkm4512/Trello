@@ -1,6 +1,6 @@
 package com.example.trello.domain.list.service;
 
-import com.example.trello.common.response.ApiRasponseWorkspaceEnum;
+import com.example.trello.common.response.ApiResponseWorkspaceEnum;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseListEnum;
 import com.example.trello.domain.board.entity.Board;
@@ -144,7 +144,7 @@ public class ListService {
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new RuntimeException(ApiRasponseWorkspaceEnum.WORKSPACE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new RuntimeException(ApiResponseWorkspaceEnum.WORKSPACE_NOT_FOUND.getMessage()));
 
         return boardRepository.findById(boardId)
                 .orElseThrow(() -> new NoSuchElementException("보드를 찾을 수 없습니다."));

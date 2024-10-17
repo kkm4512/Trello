@@ -1,6 +1,7 @@
 package com.example.trello.common.aop;
 
 import com.example.trello.domain.member.dto.request.MemberCreateRequest;
+import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.slack.SlackService;
 import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.user.entity.User;
@@ -33,7 +34,7 @@ public class AspectModule {
     public Object adviceMemberAdd(ProceedingJoinPoint pjp) throws Throwable {
         Object result = pjp.proceed();
         MemberCreateRequest memberCreateRequest = (MemberCreateRequest) getArg(pjp,1);
-        User user = userRepository.findById(memberCreateRequest.getUserId())
+        User user = userRepository.findByEmail(memberCreateRequest.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         slackService.sendMessage(
                 SLACK_NOTI_ALL_ROOM,

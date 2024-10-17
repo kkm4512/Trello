@@ -9,17 +9,21 @@ import com.example.trello.domain.comment.dto.response.PutCommentResponse;
 import com.example.trello.domain.comment.dto.response.SaveCommentResponse;
 import com.example.trello.domain.comment.service.CommentService;
 import com.example.trello.domain.user.dto.AuthUser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Comment", description = "김현")
 @RestController
 @RequestMapping("workspaces/{workspaceId}/boards/{boardsId}/lists/{listId}/cards/{cardId}")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
+    @Operation(summary = "댓글 생성", description = "카드에 댓글을 생성합니다.")
     @PostMapping("/comments")
     public ResponseEntity<ApiResponse<SaveCommentResponse>> saveComment(
             @AuthenticationPrincipal AuthUser authUser,
@@ -33,6 +37,7 @@ public class CommentController {
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
+    @Operation(summary = "댓글 수정", description = "카드에 댓글을 수정합니다.")
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<ApiResponse<PutCommentResponse>> updateComment(
             @AuthenticationPrincipal AuthUser authUser,
@@ -47,6 +52,7 @@ public class CommentController {
         return ResponseEntity.status(apiResponse.getCode()).body(apiResponse);
     }
 
+    @Operation(summary = "댓글 삭제", description = "카드에 댓글을 삭제합니다.")
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<ApiResponse<DeleteCommentResponse>> deleteComment(
             @AuthenticationPrincipal AuthUser authUser,

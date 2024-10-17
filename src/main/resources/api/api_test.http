@@ -2,47 +2,85 @@
 
 @ADMIN_TOKEN = AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC
 
-### 회원가입 - 관리자
+### 회원가입 - 관리자 1
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser12334343423@example.com",
+  "email": "admin1@example.com",
   "password": "testpassword1234!",
   "admin": true,
   "adminToken": "{{ADMIN_TOKEN}}"
 }
 
-### 회원가입 - 일반 사용자
+### 회원가입 - 관리자 2
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser1@example.com",
+  "email": "admin2@example.com",
+  "password": "testpassword1234!",
+  "admin": true,
+  "adminToken": "{{ADMIN_TOKEN}}"
+}
+
+### 회원가입 - 일반 사용자 1
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
   "password": "testpassword1234!",
   "admin": false,
-  "adminToken": "string"
+  "adminToken": ""
 }
 
-### 회원가입
+### 회원가입 - 일반 사용자 2
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser3@example.com",
+  "email": "user2@example.com",
   "password": "testpassword1234!",
-  "adminKey": ""
+  "admin": false,
+  "adminToken": ""
 }
 
-### 로그인
+### 로그인 - 관리자 1
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "testuser1@example.com",
+  "email": "admin1@example.com",
   "password": "testpassword1234!"
 }
 
+### 로그인 - 관리자 2
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "admin2@example.com",
+  "password": "testpassword1234!"
+}
+
+### 로그인 - 일반 사용자 1
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "testpassword1234!"
+}
+
+### 로그인 - 일반 사용자 2
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "testpassword1234!"
+}
 
 ### 회원탈퇴
 DELETE {{baseUrl}}/users/1
@@ -79,7 +117,7 @@ Content-Type: application/json
 }
 
 ### 워크스페이스 조회
-GET{{baseUrl}}/workspaces/1
+GET {{baseUrl}}/workspaces
 Content-Type: application/json
 
 ### 워크스페이스 수정
@@ -101,19 +139,43 @@ POST {{baseUrl}}/workspaces/1/members
 Content-Type: application/json
 
 {
-  "userId": 2
+  "email" : "admin2@example.com"
 }
 
 ### 멤버 목록 조회
 GET {{baseUrl}}/workspaces/1/members
 Content-Type: application/json
 
-### 멤버 역할 변경
+### 멤버 역할 변경 - 자신 변경 불가
 PUT {{baseUrl}}/workspaces/1/members/1
 Content-Type: application/json
 
 {
   "memberRole": "BOARD_MEMBER"
+}
+
+### 멤버 역할 변경 - 읽기/쓰기 권한 변경
+PUT {{baseUrl}}/workspaces/1/members/2
+Content-Type: application/json
+
+{
+  "memberRole": "BOARD_MEMBER"
+}
+
+### 멤버 역할 변경 - 읽기 권한 변경
+PUT {{baseUrl}}/workspaces/1/members/2
+Content-Type: application/json
+
+{
+  "memberRole": "READ_ONLY"
+}
+
+### 멤버 역할 변경 - 워크스페이스 관리자로 변경 불가능
+PUT {{baseUrl}}/workspaces/1/members/2
+Content-Type: application/json
+
+{
+  "memberRole": "WORKSPACE_ADMIN"
 }
 
 ### 멤버 삭제
@@ -133,7 +195,7 @@ Content-Type: application/json
 GET {{baseUrl}}/workspaces/1/boards
 Content-Type: application/json
 
-### 보드 단건 조회 - 리스트 , 카드의 리스트정보 필요해서 보류
+### 보드 단건 조회
 GET {{baseUrl}}/workspaces/1/boards/1
 Content-Type: application/json
 
@@ -148,4 +210,25 @@ Content-Type: application/json
 
 ### 보드 삭제
 DELETE {{baseUrl}}/workspaces/1/boards/1
+Content-Type: application/json
+
+### 리스트 생성
+POST {{baseUrl}}/workspaces/1/boards/1/lists
+Content-Type: application/json
+
+{
+  "title": "리스트 제목"
+}
+
+### 카드 생성 - 수정
+POST {{baseUrl}}/workspaces/1/boards/1/lists/1/cards
+Content-Type: application/json
+
+{
+  "title": "카드 제목",
+  "content": "카드 설명"
+}
+
+### 카드 목록 조회
+GET {{baseUrl}}/workspaces/1/boards/1/lists/1/cards/1
 Content-Type: application/json

@@ -1,3 +1,4 @@
+// MemberListResponse.java (DTO 응답)
 package com.example.trello.domain.member.dto.response;
 
 import lombok.*;

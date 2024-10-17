@@ -13,7 +13,8 @@ public enum ApiResponseCardEnum implements ApiResponseEnum {
     CARD_SEARCH_OK(HttpStatus.OK, "카드들이 검색되었습니다"),
 
     // 404
-    CARD_NOT_FOUND(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다");
+    CARD_NOT_FOUND(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다"),
+    NOT_CARD_OWNER(HttpStatus.FORBIDDEN, "카드 담당자가 아닙니다.");
 
 
     private final HttpStatus httpStatus;

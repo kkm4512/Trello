@@ -19,7 +19,11 @@ public class Attachment extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "origin_file_name")
     private String originFileName;
+
+    @Column(name = "path")
     private String path;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,7 +31,7 @@ public class Attachment extends Timestamped {
     private Card card;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

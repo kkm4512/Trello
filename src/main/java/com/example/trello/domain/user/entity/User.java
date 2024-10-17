@@ -1,6 +1,7 @@
 package com.example.trello.domain.user.entity;
 
 import com.example.trello.common.entity.Timestamped;
+import com.example.trello.domain.comment.entity.Comment;
 import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.user.dto.UserRequestDto;
 import jakarta.persistence.*;
@@ -18,12 +19,15 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name ="users")
 public class User extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -36,6 +40,9 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
 
     public User(UserRequestDto userRequest, UserRole role, String password) {
