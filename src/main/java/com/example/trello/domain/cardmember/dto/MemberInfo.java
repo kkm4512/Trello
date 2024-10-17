@@ -12,4 +12,9 @@ public class MemberInfo {
         this.id = cardMember.getUser().getId();
         this.email = cardMember.getUser().getEmail();
     }
+
+    public MemberInfo(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
 }
