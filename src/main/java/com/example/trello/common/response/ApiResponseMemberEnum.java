@@ -13,7 +13,7 @@ public enum ApiResponseMemberEnum implements ApiResponseEnum {
 
         MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버를 찾을 수 없습니다."),
         WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다."),
-        USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+        USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일의 사용자를 찾을 수 없습니다"),
 
         WORKSPACE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 워크스페이스에 접근할 수 없습니다."),
         WORKSPACE_ADMIN_REQUIRED(HttpStatus.FORBIDDEN, "권한이 부족합니다."),
@@ -23,7 +23,8 @@ public enum ApiResponseMemberEnum implements ApiResponseEnum {
         // 요청 데이터 오류 응답 400
         MEMBER_ROLE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 멤버 역할입니다."),
         CANNOT_CHANGE_OWN_ROLE(HttpStatus.BAD_REQUEST, "자신의 역할은 변경할 수 없습니다."),
-        CANNOT_DELETE_OWN_MEMBER(HttpStatus.BAD_REQUEST, "본인을 삭제할 수 없습니다.");
+        CANNOT_DELETE_OWN_MEMBER(HttpStatus.BAD_REQUEST, "본인을 삭제할 수 없습니다."),
+        INVALID_EMAIL(HttpStatus.BAD_REQUEST, "유효하지 않은 이메일입니다.");
 
         private final HttpStatus httpStatus;
         private final int code;

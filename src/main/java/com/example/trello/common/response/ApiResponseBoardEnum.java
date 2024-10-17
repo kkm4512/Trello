@@ -11,12 +11,8 @@ public enum ApiResponseBoardEnum implements ApiResponseEnum {
     BOARD_UPDATE_SUCCESS(HttpStatus.OK, "보드 수정에 성공하였습니다."),
     BOARD_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "보드 삭제에 성공하였습니다."),
 
-    BOARD_CREATE_FAIL(HttpStatus.BAD_REQUEST, "보드 생성에 실패하였습니다."),
-    BOARD_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "보드 수정에 실패하였습니다."),
-    BOARD_DELETE_FAIL(HttpStatus.BAD_REQUEST, "보드 삭제에 실패하였습니다."),
 
     WORKSPACE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다."),
-    WORKSPACE_ADMIN_REQUIRED(HttpStatus.FORBIDDEN, "워크스페이스 관리 권한이 필요합니다."),
 
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 보드를 찾을 수 없습니다."),
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 워크스페이스를 찾을 수 없습니다.");

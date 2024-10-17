@@ -29,34 +29,33 @@ import java.util.stream.Collectors;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final WorkspaceRepository workspaceRepository;
     private final MemberValidator memberValidator;
 
     @Transactional
     @Override
     public ApiResponse<MemberResponse> createMember(Long workspaceId, MemberCreateRequest request, Long adminId) {
-        // 관리자가 맞는지 확인 (WORKSPACE_ADMIN)
-        memberValidator.validateWorkspaceAdmin(adminId, workspaceId);
+        // 관리자 또는 멤버 권한 확인
+        memberValidator.validateAdminOrMemberRole(adminId, workspaceId);
 
-        // 멤버 생성 요청 검증
-        memberValidator.validateCreateRequest(workspaceId, request);
+        // 이메일을 통한 유저 확인)
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new MemberException(ApiResponseMemberEnum.USER_NOT_FOUND));
+
+        // 이미 해당 워크스페이스에 유저가 존재하는지 확인
+        if (memberRepository.existsByUserIdAndWorkspaceId(user.getId(), workspaceId)) {
+            throw new MemberException(ApiResponseMemberEnum.MEMBER_ALREADY_EXISTS);
+        }
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new MemberException(ApiResponseMemberEnum.WORKSPACE_NOT_FOUND));
-
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new MemberException(ApiResponseMemberEnum.USER_NOT_FOUND));
-
-        if (memberRepository.existsByUserIdAndWorkspaceId(user.getId(), workspace.getId())) {
-            throw new MemberException(ApiResponseMemberEnum.MEMBER_ALREADY_EXISTS);
-        }
 
         // 새로운 멤버 생성
         Member member = new Member();
         member.setWorkspace(workspace);
         member.setUser(user);
-        member.setMemberRole(MemberRole.READ_ONLY);
+        member.setMemberRole(MemberRole.READ_ONLY);  // 기본 권한 설정 (READ_ONLY)
         memberRepository.save(member);
 
         MemberResponse response = buildMemberResponse(member);
@@ -67,7 +66,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public ApiResponse<List<MemberListResponse>> getMembers(Long workspaceId, Long userId) {
         // 멤버가 해당 워크스페이스에 속하는지 확인
-        memberValidator.validateMemberInWorkspace(userId, workspaceId);
+        memberValidator.validateMemberInWorkspaceRead(userId, workspaceId);
 
         // 해당 워크스페이스의 멤버 조회
         List<Member> members = memberRepository.findAllByWorkspaceId(workspaceId);
@@ -82,8 +81,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public ApiResponse<MemberResponse> updateMemberRole(Long workspaceId, Long memberId, MemberUpdateRequest request, Long adminId) {
-        // 관리자가 맞는지 확인 (WORKSPACE_ADMIN)
-        memberValidator.validateWorkspaceAdmin(adminId, workspaceId);
+        // 관리자 또는 멤버 권한 확인
+        memberValidator.validateAdminOrMemberRole(adminId, workspaceId);
 
         // 자기 자신의 역할 변경을 막는 검증 추가
         memberValidator.validateUpdateRequest(workspaceId, memberId, request, adminId);
@@ -102,8 +101,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public ApiResponse<Void> deleteMember(Long workspaceId, Long memberId, Long adminId) {
-        // 관리자가 맞는지 확인 (WORKSPACE_ADMIN)
-        memberValidator.validateWorkspaceAdmin(adminId, workspaceId);
+        // 관리자 또는 멤버 권한 확인
+        memberValidator.validateAdminOrMemberRole(adminId, workspaceId);
 
         memberValidator.validateDeleteRequest(workspaceId, memberId, adminId);
 
