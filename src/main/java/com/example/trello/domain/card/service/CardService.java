@@ -1,6 +1,7 @@
 package com.example.trello.domain.card.service;
 
 import com.example.trello.common.annotation.CardChangeSlack;
+import com.example.trello.common.exception.*;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseEnum;
@@ -36,6 +37,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.trello.common.response.ApiResponseBoardEnum.BOARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCardEnum.CARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCardEnum.NOT_CARD_OWNER;
+import static com.example.trello.common.response.ApiResponseListEnum.LIST_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseMemberEnum.MEMBER_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseMemberEnum.WORKSPACE_ADMIN_REQUIRED;
+import static com.example.trello.common.response.ApiResponseWorkspaceEnum.WORKSPACE_ACCESS_DENIED;
+import static com.example.trello.common.response.ApiResponseWorkspaceEnum.WORKSPACE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -96,11 +106,8 @@ public class CardService {
 
     /* 카드 상세 조회 */
     public ApiResponse<GetCardResponse> getCard(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId) {
-        // 로그인한 유저가 워크스페이스 멤버 등록 유저인지 확인
-        Member user = memberOrElseThrow(authUser);
-
-        // 워크스페이스, 보더, 리스트 유무 확인
-        validateWorkspaceAndBoardAndList(workspaceId, boardsId, listId);
+        // 로그인한 유저가 워크스페이스 멤버 등록 유저인지 확인 && 워크스페이스, 보더, 리스트 유무 확인
+        validateWorkspaceAndBoardAndList(authUser.getId(), workspaceId, boardsId, listId);
 
         // 카드 가져오기
         Card card = cardOrElseThrow(cardId);
@@ -120,8 +127,7 @@ public class CardService {
     @Transactional
     public ApiResponse<deleteResponse> deleteCard(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId) {
         // 보더에 등록된 멤버인지 확인
-        Member user = memberRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
+        Member user = memberOrElseThrow(authUser);
 
         // 읽기 권한인지 확인
         userMemberRole(user);
@@ -153,26 +159,26 @@ public class CardService {
     /* 유저 읽기 권한 확인 */
     private void userMemberRole(Member user) {
         if (user.getMemberRole() == MemberRole.READ_ONLY) {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new MemberException(WORKSPACE_ADMIN_REQUIRED);
         }
     }
 
     /* 로그인한 유저 정보 */
     private Member memberOrElseThrow(AuthUser authUser) {
         return memberRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
+                () -> new MemberException(MEMBER_NOT_FOUND));
     }
 
     /* 리스트 확인 */
     private BoardList listOrElseThrow(Long listId) {
         return listRepository.findById(listId).orElseThrow(
-                () -> new IllegalArgumentException("해당 리스트가 없습니다."));
+                () -> new BoardListException(LIST_NOT_FOUND));
     }
 
     /* 카드 가져오기 */
     private Card cardOrElseThrow(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 카드가 없습니다."));
+                () -> new CardException(CARD_NOT_FOUND));
     }
 
     /* 워크스페이스, 보더 유무 확인 */
@@ -181,26 +187,30 @@ public class CardService {
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+            throw new WorkspaceException(WORKSPACE_NOT_FOUND);
         }
         if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
+            throw new BoardException(BOARD_NOT_FOUND);
         }
     }
 
     /* 워크 스페이스, 보더, 리스트 유무 확인 */
-    private void validateWorkspaceAndBoardAndList(Long workspaceId, Long boardsId, Long listId) {
+    private void validateWorkspaceAndBoardAndList(Long userId, Long workspaceId, Long boardsId, Long listId) {
+        boolean isUser = memberRepository.existsByUserIdAndWorkspaceId(userId,workspaceId);
         boolean isWorkspace = workspaceRepository.existsById(workspaceId);
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
+        if (!isUser) {
+            throw new MemberException(WORKSPACE_ACCESS_DENIED);
+        }
         if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+            throw new WorkspaceException(WORKSPACE_NOT_FOUND);
         }
         if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
+            throw new BoardException(BOARD_NOT_FOUND);
         }
         if (!list) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
+            throw new BoardListException(LIST_NOT_FOUND);
         }
     }
 
@@ -211,16 +221,16 @@ public class CardService {
         boolean list = listRepository.existsById(listId);
         boolean cardMember = cardMemberRepository.existsByUserIdAndCardId(user.getUser().getId(), cardId);
         if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+            throw new WorkspaceException(WORKSPACE_NOT_FOUND);
         }
         if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
+            throw new BoardException(BOARD_NOT_FOUND);
         }
         if (!list) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
+            throw new BoardListException(LIST_NOT_FOUND);
         }
         if (!cardMember) {
-            throw new IllegalArgumentException("해당 카드 담당자가 아닙니다.");
+            throw new CardException(NOT_CARD_OWNER);
         }
     }
 }

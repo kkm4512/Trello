@@ -1,5 +1,6 @@
 package com.example.trello.domain.cardmember.service;
 
+import com.example.trello.common.exception.*;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseCardMemberEnum;
@@ -7,6 +8,9 @@ import com.example.trello.common.response.ApiResponseEnum;
 import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.card.repository.CardRepository;
+import com.example.trello.domain.cardlog.entity.CardLog;
+import com.example.trello.domain.cardlog.enums.MemberChangeStatus;
+import com.example.trello.domain.cardlog.repository.CardLogRepository;
 import com.example.trello.domain.cardmember.dto.MemberInfo;
 import com.example.trello.domain.cardmember.dto.request.DeleteCardMemberRequest;
 import com.example.trello.domain.cardmember.dto.request.SaveCardMemberRequest;
@@ -28,16 +32,24 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.trello.common.response.ApiResponseBoardEnum.BOARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCardEnum.CARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCardEnum.NOT_CARD_OWNER;
+import static com.example.trello.common.response.ApiResponseListEnum.LIST_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseMemberEnum.MEMBER_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseMemberEnum.WORKSPACE_ADMIN_REQUIRED;
+import static com.example.trello.common.response.ApiResponseWorkspaceEnum.WORKSPACE_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class CardMemberService {
     private final CardMemberRepository cardMemberRepository;
     private final MemberRepository memberRepository;
-    private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
     private final BoardRepository boardRepository;
     private final ListRepository listRepository;
     private final CardRepository cardRepository;
+    private final CardLogRepository cardLogRepository;
 
     /* 카드 멤버 추가 */
     @Transactional
@@ -60,6 +72,11 @@ public class CardMemberService {
             Member member = memberRepository.findByUserId(id).orElseThrow(
                     () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
             CardMember cardMember = new CardMember(card, member);
+
+            // 카드 담당자 추가관련 로그데이터 저장
+            CardLog cardLog = new CardLog(user, member, card, MemberChangeStatus.ADD);
+            cardLogRepository.save(cardLog);
+
             cardMemberRepository.save(cardMember);
             members.add(new MemberInfo(cardMember));
         }
@@ -89,6 +106,11 @@ public class CardMemberService {
         for (Long id : request.getMemberId()) {
             Member member = memberOrElseThrow(id);
             CardMember cardMember = new CardMember(card, member);
+
+            // 카드 담당자 삭제관련 로그데이터 저장
+            CardLog cardLog = new CardLog(user, member, card, MemberChangeStatus.DELETE);
+            cardLogRepository.save(cardLog);
+
             cardMemberRepository.delete(cardMember);
             members.add(new MemberInfo(cardMember));
         }
@@ -101,13 +123,13 @@ public class CardMemberService {
     /* 로그인한 유저 정보 */
     private Member memberOrElseThrow(Long userId) {
         return memberRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
+                () -> new MemberException(MEMBER_NOT_FOUND));
     }
 
     /* 유저 읽기 권한 확인 */
     private void userMemberRole(Member user) {
         if (user.getMemberRole() == MemberRole.READ_ONLY) {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new MemberException(WORKSPACE_ADMIN_REQUIRED);
         }
     }
 
@@ -115,7 +137,7 @@ public class CardMemberService {
     private void checkCardMember(Member user, Long cardId) {
         boolean authMember = cardMemberRepository.existsByUserIdAndCardId(user.getId(), cardId);
         if (!authMember) {
-            throw new IllegalArgumentException("해당 카드의 담당자가 아닙니다.");
+            throw new CardException(NOT_CARD_OWNER);
         }
     }
 
@@ -125,15 +147,15 @@ public class CardMemberService {
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
         if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+            throw new WorkspaceException(WORKSPACE_NOT_FOUND);
         }
         if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
+            throw new BoardException(BOARD_NOT_FOUND);
         }
         if (!list) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
+            throw new BoardListException(LIST_NOT_FOUND);
         }
         return cardRepository.findById(cardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 카드가 없습니다."));
+                () -> new CardException(CARD_NOT_FOUND));
     }
 }
