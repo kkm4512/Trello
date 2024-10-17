@@ -85,13 +85,17 @@ public class MemberValidator {
     }
 
     // 멤버 삭제 요청 유효성 검사
-    public void validateDeleteRequest(Long workspaceId, Long memberId) {
+    public void validateDeleteRequest(Long workspaceId, Long memberId,  Long currentUserId) {
         if (workspaceId == null || workspaceId <= 0) {
             throw new MemberException(ApiResponseMemberEnum.WORKSPACE_NOT_FOUND);
         }
 
         if (memberId == null || memberId <= 0) {
             throw new MemberException(ApiResponseMemberEnum.MEMBER_NOT_FOUND);
+        }
+
+        if (currentUserId.equals(memberId)) {
+            throw new MemberException(ApiResponseMemberEnum.CANNOT_DELETE_OWN_MEMBER);
         }
 
         if (!memberRepository.existsByIdAndWorkspaceId(memberId, workspaceId)) {

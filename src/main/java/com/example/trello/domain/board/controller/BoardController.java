@@ -8,6 +8,7 @@ import com.example.trello.domain.board.service.BoardService;
 import com.example.trello.domain.user.dto.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Board", description = "보드 API")
+@Tag(name = "Board", description = "이정현")
 @RestController
 @RequestMapping("/workspaces/{workspaceId}/boards")
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardResponse>> createBoard(
             @PathVariable Long workspaceId,
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestBody BoardRequest request) {
+            @Valid @RequestBody BoardRequest request) {
         ApiResponse<BoardResponse> response = boardService.createBoard(workspaceId, authUser.getId(), request);
         return ResponseEntity.status(response.getCode()).body(response);
     }
@@ -39,7 +40,7 @@ public class BoardController {
             @PathVariable Long workspaceId,
             @PathVariable Long boardId,
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestBody BoardRequest request) {
+            @Valid @RequestBody BoardRequest request) {
         ApiResponse<BoardResponse> response = boardService.updateBoard(workspaceId, boardId, authUser.getId(), request);
         return ResponseEntity.status(response.getCode()).body(response);
     }
