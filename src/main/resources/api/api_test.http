@@ -220,7 +220,7 @@ Content-Type: application/json
   "title": "리스트 제목"
 }
 
-### 카드 생성
+### 카드 생성 - 수정
 POST {{baseUrl}}/workspaces/1/boards/1/lists/1/cards
 Content-Type: application/json
 
