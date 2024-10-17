@@ -1,5 +1,7 @@
 package com.example.trello.domain.attachment.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.trello.common.exception.CardException;
 import com.example.trello.common.exception.FileException;
 import com.example.trello.common.exception.UserException;
@@ -17,6 +19,7 @@ import com.example.trello.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,7 +66,6 @@ public class S3ServiceImpl implements AttachmentService {
                 attachmentRepository.save(attachment);
                 s3Service.put(filePath,file);
                 String fileName = utilService.getLastFileName(filePath.toString());
-                System.out.println(fileName);
                 data.add(fileName);
             }
         } catch (Exception e) {
@@ -75,7 +77,6 @@ public class S3ServiceImpl implements AttachmentService {
 
     @Override
     public ApiResponse<List<String>> downloads(String card_id,List<String> fileNames) {
-        long start = System.currentTimeMillis();
         List<String> data = new ArrayList<>();
         try {
             List<Attachment> attachments = attachmentRepository.findByCardId(Long.parseLong(card_id));
@@ -88,9 +89,6 @@ public class S3ServiceImpl implements AttachmentService {
             }
         } catch (Exception e) {
             log.error(e.getMessage(),e);
-        } finally {
-            long end = System.currentTimeMillis();
-            System.out.println(end - start);
         }
 
         return ApiResponse.of(ApiResponseFileEnum.FILE_OK,data);
