@@ -22,7 +22,8 @@ public enum ApiResponseMemberEnum implements ApiResponseEnum {
 
         // 요청 데이터 오류 응답 400
         MEMBER_ROLE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 멤버 역할입니다."),
-        CANNOT_CHANGE_OWN_ROLE(HttpStatus.BAD_REQUEST, "자신의 역할은 변경할 수 없습니다.");
+        CANNOT_CHANGE_OWN_ROLE(HttpStatus.BAD_REQUEST, "자신의 역할은 변경할 수 없습니다."),
+        CANNOT_DELETE_OWN_MEMBER(HttpStatus.BAD_REQUEST, "본인을 삭제할 수 없습니다.");
 
         private final HttpStatus httpStatus;
         private final int code;

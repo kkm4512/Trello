@@ -27,7 +27,7 @@ public class Board extends Timestamped {
     @Column(nullable = false, length = 7)
     private String backgroundColor;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardList> boardLists;
 
     @ManyToOne(fetch = FetchType.LAZY)
