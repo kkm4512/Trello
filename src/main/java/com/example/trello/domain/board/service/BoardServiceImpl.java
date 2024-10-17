@@ -11,7 +11,6 @@ import com.example.trello.domain.board.repository.BoardRepository;
 import com.example.trello.domain.board.validation.BoardValidator;
 import com.example.trello.domain.workspace.entity.Workspace;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
-import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.board.dto.response.BoardListResponse;
 import com.example.trello.domain.board.dto.response.CardResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,6 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
-    private final MemberRepository memberRepository;
     private final BoardValidator boardValidator;
 
     // 보드 생성
