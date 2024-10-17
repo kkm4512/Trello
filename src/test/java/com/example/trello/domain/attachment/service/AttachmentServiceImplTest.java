@@ -32,7 +32,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class AttachmentServiceImplTest {
     @Mock
     AttachmentPathService pathService;
