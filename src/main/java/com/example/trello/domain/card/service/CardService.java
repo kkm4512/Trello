@@ -96,7 +96,7 @@ public class CardService {
 
     /* 카드 상세 조회 */
     public ApiResponse<GetCardResponse> getCard(AuthUser authUser, Long workspaceId, Long boardsId, Long listId, Long cardId) {
-        // 로그인한 유저가 워크스페이스 멤버 등록 유저인지 확인
+        // 로그인한 유저가 워크스페이스 멤버 등록 유저인지 확인 (수정 할 예정)
         Member user = memberOrElseThrow(authUser);
 
         // 워크스페이스, 보더, 리스트 유무 확인

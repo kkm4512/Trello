@@ -24,7 +24,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByIdAndWorkspaceId(Long memberId, Long workspaceId);
 
     Optional<Member> findByUserId(Long userId);
-
-    Optional<Member> findEmailByUserId(Long id);
 }
-
