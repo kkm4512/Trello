@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     }
 
     /*
-    // 그 외 모든 예외 처리 (예상치 못한 예외 처리)
+    // 그 외 모든 예외 처리 = 예상치 못한 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         ApiResponse<Void> apiResponse = new ApiResponse<>(ApiResponseGolbalEnum.INTERNAL_SERVER_ERROR);
