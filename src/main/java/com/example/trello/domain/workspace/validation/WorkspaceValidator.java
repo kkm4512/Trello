@@ -28,7 +28,7 @@ public class WorkspaceValidator {
         }
     }
 
-    // 유저가 관리자 권한이 없는 경우 예외 처리
+    // 유저가 관리자 권한이 없는 경우 예외
     public void validateAdminRole(AuthUser authUser) {
         if (authUser.getAuthorities() == null || authUser.getAuthorities().isEmpty() ||
                 !authUser.getAuthorities().contains(ADMIN_AUTHORITY)) {
@@ -36,7 +36,7 @@ public class WorkspaceValidator {
         }
     }
 
-    // 워크스페이스 관리자 권한이 없는 경우 예외 처리
+    // 워크스페이스 관리자 권한이 없는 경우 예외
     public void validateWorkspaceAdminRole(AuthUser authUser, Long workspaceId) {
         Member member = memberRepository.findByUserIdAndWorkspaceId(authUser.getId(), workspaceId)
                 .orElseThrow(() ->  new WorkspaceException(ApiResponseWorkspaceEnum.WORKSPACE_ACCESS_DENIED));
