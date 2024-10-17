@@ -2,7 +2,6 @@ package com.example.trello.domain.member.validation;
 
 import com.example.trello.common.exception.MemberException;
 import com.example.trello.common.response.ApiResponseMemberEnum;
-import com.example.trello.domain.member.dto.request.MemberCreateRequest;
 import com.example.trello.domain.member.dto.request.MemberUpdateRequest;
 import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.member.enums.MemberRole;
@@ -25,17 +24,6 @@ public class MemberValidator {
 
         if (member.getMemberRole() != MemberRole.WORKSPACE_ADMIN && member.getMemberRole() != MemberRole.BOARD_MEMBER) {
             throw new MemberException(ApiResponseMemberEnum.WORKSPACE_ACCESS_DENIED);
-        }
-    }
-
-    // 멤버 생성 요청 유효성 검사
-    public void validateCreateRequest(Long workspaceId, MemberCreateRequest request) {
-        if (workspaceId == null || workspaceId <= 0) {
-            throw new MemberException(ApiResponseMemberEnum.WORKSPACE_NOT_FOUND);
-        }
-
-        if (request.getEmail() == null || request.getEmail().isEmpty()) {
-            throw new MemberException(ApiResponseMemberEnum.INVALID_EMAIL);
         }
     }
 
