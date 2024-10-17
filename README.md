@@ -3,7 +3,7 @@
 이 애플리케이션은 사용자가 커스터마이징 가능한 보드, 작업 그룹, 세부 작업 항목을 생성할 수 있는 프로젝트 및 작업 관리 플랫폼입니다. 
 실시간 협업 기능을 강화하여 공유 작업 공간, 실시간 업데이트, 작업 내 통신 채널을 제공합니다. 
 사용자 인증 시스템은 로그인 처리뿐만 아니라 세부적인 권한 제어를 구현하여, 관리자가 작업 및 보드에 대한 특정 권한을 가진 맞춤형 역할을 할당할 수 있습니다.
-또한, 사용자에게 Slack을 통해 알림을 전송됩니다. 더 나아가, 프로젝트 진행 상황 및 팀 생산성을 추적할 수 있는 분석 할수 있습니다.
+또한, 사용자에게 Slack을 통해 알림을 전송됩니다. 더 나아가, 프로젝트 진행 상황 및 팀 생산성을 추적할 수 있는 분석을 할수 있습니다.
 
 # 🚀 STACK 
 **Environment**
@@ -18,6 +18,7 @@
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/docker--compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![자바](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![SPRING BOOT](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![SQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
@@ -70,7 +71,7 @@ POST http://localhost:8080/users
 POST http://localhost:8080/users
 {
   "email": "a2@gamil.com",
-  "password": "1234!abc",
+  "password": "1234!abc"
 }
 ```
 #### Response Example
@@ -104,7 +105,7 @@ POST http://localhost:8080/users/login
 POST http://localhost:8080/users/login
 {
   "email": "a2@gamil.com",
-  "password": "1234!abc",
+  "password": "1234!abc"
 }
 ```
 #### Response Example
@@ -315,7 +316,7 @@ POST http://localhost:8080/workspaces/{workspaceId}/members
 ```http
 POST http://localhost:8080/workspaces/2/members
 {
-  "userId": 2
+  "email": "a233456@gmail.com"
 }
 ```
 #### Response Example
@@ -1038,7 +1039,7 @@ DELETE http://localhost:8080/workspaces/2/boards/2/lists/1/cards/1/comments/1
 ```
 ***
 
-##File Upload
+## File Upload
 ### 사진 업로드
 ```http
 POST http://localhost:8080/api/cards/{card_id}/files
