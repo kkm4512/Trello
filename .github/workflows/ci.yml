@@ -24,7 +24,7 @@ jobs:
 
       - name: yml 파일 생성
         run: |
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
+          echo "${{ secrets.APPLICATION_YML_LOCAL }}" > ./application.yml
         shell: bash
 
       - name: VM내의 (도커 컨테이너를 활용하여) MySQL 구동 시키기
