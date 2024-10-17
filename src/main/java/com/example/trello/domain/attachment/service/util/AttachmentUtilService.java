@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AttachmentUtilService {
     public String getLastFileName(String filePath){
-        return filePath.substring(filePath.lastIndexOf("/") + 1);
+        String[] parts = filePath.split("/", 3);
+        return parts[2];
     }
 }
