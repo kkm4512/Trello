@@ -9,9 +9,11 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkspaceUpdateResponse {
+public class WorkspaceListResponse {
     private Long id;
     private String title;
     private String description;
+    private String memberRole;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

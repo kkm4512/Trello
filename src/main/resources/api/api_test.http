@@ -146,12 +146,36 @@ Content-Type: application/json
 GET {{baseUrl}}/workspaces/1/members
 Content-Type: application/json
 
-### 멤버 역할 변경
+### 멤버 역할 변경 - 자신 변경 불가
 PUT {{baseUrl}}/workspaces/1/members/1
 Content-Type: application/json
 
 {
   "memberRole": "BOARD_MEMBER"
+}
+
+### 멤버 역할 변경 - 읽기/쓰기 권한 변경
+PUT {{baseUrl}}/workspaces/1/members/2
+Content-Type: application/json
+
+{
+  "memberRole": "BOARD_MEMBER"
+}
+
+### 멤버 역할 변경 - 읽기 권한 변경
+PUT {{baseUrl}}/workspaces/1/members/2
+Content-Type: application/json
+
+{
+  "memberRole": "READ_ONLY"
+}
+
+### 멤버 역할 변경 - 워크스페이스 관리자로 변경 불가능
+PUT {{baseUrl}}/workspaces/1/members/2
+Content-Type: application/json
+
+{
+  "memberRole": "WORKSPACE_MEMBER"
 }
 
 ### 멤버 삭제
@@ -171,7 +195,7 @@ Content-Type: application/json
 GET {{baseUrl}}/workspaces/1/boards
 Content-Type: application/json
 
-### 보드 단건 조회 - 리스트 , 카드의 리스트정보 필요해서 보류
+### 보드 단건 조회
 GET {{baseUrl}}/workspaces/1/boards/1
 Content-Type: application/json
 
@@ -187,3 +211,22 @@ Content-Type: application/json
 ### 보드 삭제
 DELETE {{baseUrl}}/workspaces/1/boards/1
 Content-Type: application/json
+
+
+### 리스트 생성
+POST {{baseUrl}}/workspaces/1/boards/1/lists
+Content-Type: application/json
+
+{
+  "title": "리스트 제목"
+}
+
+### 카드 생성
+POST {{baseUrl}}/workspaces/1/boards/1/lists/1/cards
+Content-Type: application/json
+
+{
+  "title": "카드 제목",
+  "description": "카드 설명"
+}
+

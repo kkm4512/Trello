@@ -1,4 +1,4 @@
-package com.example.trello.domain.workspace.dto.response;
+package com.example.trello.domain.board.dto.response;
 
 import lombok.*;
 
@@ -9,11 +9,10 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkspaceGetUserResponse {
+public class CardResponse {
     private Long id;
     private String title;
-    private String description;
-    private String memberRole;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

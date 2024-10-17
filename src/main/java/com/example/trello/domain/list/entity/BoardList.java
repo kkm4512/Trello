@@ -5,10 +5,7 @@ import com.example.trello.domain.board.entity.Board;
 import com.example.trello.domain.card.entity.Card;
 import com.example.trello.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,22 +6,18 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ApiResponseMemberEnum implements ApiResponseEnum {
 
-        // 성공 응답 200
         MEMBER_READ_SUCCESS(HttpStatus.OK, "멤버 조회에 성공하였습니다."),
         MEMBER_CREATE_SUCCESS(HttpStatus.CREATED, "멤버 생성에 성공하였습니다."),
         MEMBER_UPDATE_SUCCESS(HttpStatus.OK, "멤버 역할 수정에 성공하였습니다."),
         MEMBER_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "멤버 삭제에 성공하였습니다."),
 
-        // 리소스 없음 오류 응답 404
         MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버를 찾을 수 없습니다."),
         WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다."),
         USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
-        // 권한 관련 오류 403
         WORKSPACE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 워크스페이스에 접근할 수 없습니다."),
         WORKSPACE_ADMIN_REQUIRED(HttpStatus.FORBIDDEN, "권한이 부족합니다."),
 
-        // 중복 오류 응답 409
         MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 해당 워크스페이스에 존재하는 멤버입니다."),
 
         // 요청 데이터 오류 응답 400

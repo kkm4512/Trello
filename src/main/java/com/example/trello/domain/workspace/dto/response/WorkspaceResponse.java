@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkspaceCreateResponse {
+public class WorkspaceResponse {
     private Long id;
     private String title;
     private String description;

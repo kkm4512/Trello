@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardUpdateRequest {
+public class BoardRequest {
     private String title;
     private String backgroundColor;
 }

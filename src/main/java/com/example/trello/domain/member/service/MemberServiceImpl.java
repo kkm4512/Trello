@@ -130,11 +130,13 @@ public class MemberServiceImpl implements MemberService {
                 .id(member.getId())
                 .workspaceId(member.getWorkspace().getId())
                 .userId(member.getUser().getId())
+                .email(member.getUser().getEmail())
                 .memberRole(member.getMemberRole().name())
                 .createdAt(member.getCreatedAt())
                 .updatedAt(member.getUpdatedAt())
                 .build();
     }
+
 }
 
 

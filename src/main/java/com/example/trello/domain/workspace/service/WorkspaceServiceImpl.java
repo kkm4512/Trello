@@ -9,11 +9,9 @@ import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.dto.AuthUser;
 import com.example.trello.domain.user.entity.User;
 import com.example.trello.domain.user.repository.UserRepository;
-import com.example.trello.domain.workspace.dto.request.WorkspaceCreateRequest;
-import com.example.trello.domain.workspace.dto.request.WorkspaceUpdateRequest;
-import com.example.trello.domain.workspace.dto.response.WorkspaceCreateResponse;
-import com.example.trello.domain.workspace.dto.response.WorkspaceGetUserResponse;
-import com.example.trello.domain.workspace.dto.response.WorkspaceUpdateResponse;
+import com.example.trello.domain.workspace.dto.request.WorkspaceRequest;
+import com.example.trello.domain.workspace.dto.response.WorkspaceListResponse;
+import com.example.trello.domain.workspace.dto.response.WorkspaceResponse;
 import com.example.trello.domain.workspace.entity.Workspace;
 import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import com.example.trello.domain.workspace.validation.WorkspaceValidator;
@@ -38,19 +36,20 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     // 워크스페이스 생성
     @Transactional
     @Override
-    public ApiResponse<WorkspaceCreateResponse> createWorkspace(AuthUser authUser, WorkspaceCreateRequest request) {
+    public ApiResponse<WorkspaceResponse> createWorkspace(AuthUser authUser, WorkspaceRequest request) {
         workspaceValidator.validateAuthUser(authUser);
         workspaceValidator.validateAdminRole(authUser);
 
         Workspace workspace = createAndSaveWorkspace(request);
         createAndSaveMember(authUser, workspace);
 
-        WorkspaceCreateResponse response = buildWorkspaceCreateResponse(workspace);
+        WorkspaceResponse response = buildWorkspaceResponse(workspace);
+
         return ApiResponse.of(ApiResponseWorkspaceEnum.WORKSPACE_CREATE_SUCCESS, response);
     }
 
     // 워크스페이스 생성 로직
-    private Workspace createAndSaveWorkspace(WorkspaceCreateRequest request) {
+    private Workspace createAndSaveWorkspace(WorkspaceRequest request) {
         Workspace workspace = new Workspace();
         workspace.setTitle(request.getTitle());
         workspace.setDescription(request.getDescription());
@@ -70,39 +69,16 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         memberRepository.save(member);
     }
 
-    // 워크스페이스 생성 응답 로직
-    private WorkspaceCreateResponse buildWorkspaceCreateResponse(Workspace workspace) {
-        return WorkspaceCreateResponse.builder()
-                .id(workspace.getId())
-                .title(workspace.getTitle())
-                .description(workspace.getDescription())
-                .createdAt(workspace.getCreatedAt())
-                .updatedAt(workspace.getUpdatedAt())
-                .build();
-    }
-
     // 워크스페이스 조회
     @Transactional(readOnly = true)
     @Override
-    public ApiResponse<List<WorkspaceGetUserResponse>> getUserWorkspaces(AuthUser authUser) {
+    public ApiResponse<List<WorkspaceListResponse>> getUserWorkspaces(AuthUser authUser) {
         workspaceValidator.validateAuthUser(authUser);
 
         List<Workspace> workspaces = workspaceRepository.findByMembersUserId(authUser.getId());
 
-        List<WorkspaceGetUserResponse> responses = workspaces.stream()
-                .map(workspace -> {
-                    Member member = memberRepository.findByUserIdAndWorkspaceId(authUser.getId(), workspace.getId())
-                            .orElseThrow(() -> new WorkspaceException(ApiResponseWorkspaceEnum.WORKSPACE_ACCESS_DENIED));
-
-                    return WorkspaceGetUserResponse.builder()
-                            .id(workspace.getId())
-                            .title(workspace.getTitle())
-                            .description(workspace.getDescription())
-                            .createdAt(workspace.getCreatedAt())
-                            .updatedAt(workspace.getUpdatedAt())
-                            .memberRole(member.getMemberRole().name())
-                            .build();
-                })
+        List<WorkspaceListResponse> responses = workspaces.stream()
+                .map(this::buildWorkspaceGetUserResponse)
                 .collect(Collectors.toList());
 
         return ApiResponse.of(ApiResponseWorkspaceEnum.WORKSPACE_READ_SUCCESS, responses);
@@ -111,7 +87,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     // 워크스페이스 수정
     @Transactional
     @Override
-    public ApiResponse<WorkspaceUpdateResponse> updateWorkspace(AuthUser authUser, Long workspaceId, WorkspaceUpdateRequest request) {
+    public ApiResponse<WorkspaceResponse> updateWorkspace(AuthUser authUser, Long workspaceId, WorkspaceRequest request) {
         workspaceValidator.validateAuthUser(authUser);
         workspaceValidator.validateWorkspaceAdminRole(authUser, workspaceId);
 
@@ -122,12 +98,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         workspace.setDescription(request.getDescription());
         workspaceRepository.save(workspace);
 
-        WorkspaceUpdateResponse response = WorkspaceUpdateResponse.builder()
-                .id(workspace.getId())
-                .title(workspace.getTitle())
-                .description(workspace.getDescription())
-                .updatedAt(workspace.getUpdatedAt())
-                .build();
+        WorkspaceResponse response = buildWorkspaceResponse(workspace);
 
         return ApiResponse.of(ApiResponseWorkspaceEnum.WORKSPACE_UPDATE_SUCCESS, response);
     }
@@ -145,4 +116,32 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         workspaceRepository.delete(workspace);
         return ApiResponse.of(ApiResponseWorkspaceEnum.WORKSPACE_DELETE_SUCCESS, null);
     }
+
+    // 워크스페이스 응답
+    private WorkspaceResponse buildWorkspaceResponse(Workspace workspace) {
+        return WorkspaceResponse.builder()
+                .id(workspace.getId())
+                .title(workspace.getTitle())
+                .description(workspace.getDescription())
+                .createdAt(workspace.getCreatedAt())
+                .updatedAt(workspace.getUpdatedAt())
+                .build();
+    }
+
+    // 워크스페이스 사용자 응답
+    private WorkspaceListResponse buildWorkspaceGetUserResponse(Workspace workspace) {
+        Member member = memberRepository.findByUserIdAndWorkspaceId(workspace.getId(), workspace.getId())
+                .orElseThrow(() -> new WorkspaceException(ApiResponseWorkspaceEnum.WORKSPACE_ACCESS_DENIED));
+
+        return WorkspaceListResponse.builder()
+                .id(workspace.getId())
+                .title(workspace.getTitle())
+                .description(workspace.getDescription())
+                .createdAt(workspace.getCreatedAt())
+                .updatedAt(workspace.getUpdatedAt())
+                .memberRole(member.getMemberRole().name())
+                .build();
+    }
+
 }
+
