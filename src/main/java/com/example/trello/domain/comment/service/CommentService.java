@@ -1,6 +1,7 @@
 package com.example.trello.domain.comment.service;
 
 import com.example.trello.common.annotation.CommentAddSlack;
+import com.example.trello.common.exception.*;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardEnum;
 import com.example.trello.common.response.ApiResponseCommentEnum;
@@ -24,6 +25,14 @@ import com.example.trello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.example.trello.common.response.ApiResponseBoardEnum.BOARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCardEnum.CARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCommentEnum.COMMENT_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseListEnum.LIST_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseMemberEnum.MEMBER_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseMemberEnum.WORKSPACE_ADMIN_REQUIRED;
+import static com.example.trello.common.response.ApiResponseWorkspaceEnum.WORKSPACE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -108,26 +117,26 @@ public class CommentService {
     /* 유저 읽기 권한 확인 */
     private void userMemberRole(Member user) {
         if (user.getMemberRole() == MemberRole.READ_ONLY) {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new MemberException(WORKSPACE_ADMIN_REQUIRED);
         }
     }
 
     /* 로그인한 유저 정보 */
     private Member memberOrElseThrow(AuthUser authUser) {
         return memberRepository.findByUserId(authUser.getId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
+                () -> new MemberException(MEMBER_NOT_FOUND));
     }
 
     /* 댓글 가져오기 */
     private Comment commentOrElse(Long commentId, Member user) {
         return commentRepository.findByIdAndUserId(commentId, user.getUser().getId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다."));
+                () -> new CommentException(COMMENT_NOT_FOUND));
     }
 
     /* 카드 가져오기 */
     private Card cardOrElse(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 카드가 없습니다."));
+                () -> new CardException(CARD_NOT_FOUND));
     }
 
     /* 워크스페이스, 보더, 리스트 유무 확인 */
@@ -136,13 +145,13 @@ public class CommentService {
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean list = listRepository.existsById(listId);
         if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+            throw new WorkspaceException(WORKSPACE_NOT_FOUND);
         }
         if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
+            throw new BoardException(BOARD_NOT_FOUND);
         }
         if (!list) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
+            throw new BoardListException(LIST_NOT_FOUND);
         }
     }
 
