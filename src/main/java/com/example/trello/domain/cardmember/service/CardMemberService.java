@@ -59,7 +59,7 @@ public class CardMemberService {
                     () -> new IllegalArgumentException("해당 유저는 멤버가 아닙니다."));
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.save(cardMember);
-            members.add(new MemberInfo(member.getId(), member.getEmail()));
+            members.add(new MemberInfo(cardMember));
         }
 
         ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_SAVE_OK;
@@ -88,7 +88,7 @@ public class CardMemberService {
             Member member = memberOrElseThrow(id);
             CardMember cardMember = new CardMember(card, member);
             cardMemberRepository.delete(cardMember);
-            members.add(new MemberInfo(member.getId(), member.getEmail()));
+            members.add(new MemberInfo(cardMember));
         }
 
         ApiResponseEnum apiResponseEnum = ApiResponseCardMemberEnum.CARD_MEMBER_DELETE_OK;
