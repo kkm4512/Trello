@@ -70,7 +70,7 @@ POST http://localhost:8080/users
 POST http://localhost:8080/users
 {
   "email": "a2@gamil.com",
-  "password": "1234!abc",
+  "password": "1234!abc"
 }
 ```
 #### Response Example
@@ -104,7 +104,7 @@ POST http://localhost:8080/users/login
 POST http://localhost:8080/users/login
 {
   "email": "a2@gamil.com",
-  "password": "1234!abc",
+  "password": "1234!abc"
 }
 ```
 #### Response Example
