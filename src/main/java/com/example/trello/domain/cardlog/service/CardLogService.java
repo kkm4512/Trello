@@ -1,5 +1,6 @@
 package com.example.trello.domain.cardlog.service;
 
+import com.example.trello.common.exception.*;
 import com.example.trello.common.response.ApiResponse;
 import com.example.trello.common.response.ApiResponseCardMemberEnum;
 import com.example.trello.common.response.ApiResponseEnum;
@@ -10,8 +11,6 @@ import com.example.trello.domain.cardlog.dto.CardMemberLogInfo;
 import com.example.trello.domain.cardlog.dto.response.MemberLogResponse;
 import com.example.trello.domain.cardlog.entity.CardLog;
 import com.example.trello.domain.cardlog.repository.CardLogRepository;
-import com.example.trello.domain.cardmember.dto.response.SaveCardMemberResponse;
-import com.example.trello.domain.cardmember.repository.CardMemberRepository;
 import com.example.trello.domain.list.repository.ListRepository;
 import com.example.trello.domain.member.repository.MemberRepository;
 import com.example.trello.domain.user.dto.AuthUser;
@@ -20,6 +19,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.example.trello.common.response.ApiResponseBoardEnum.BOARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseCardEnum.CARD_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseListEnum.LIST_NOT_FOUND;
+import static com.example.trello.common.response.ApiResponseWorkspaceEnum.WORKSPACE_ACCESS_DENIED;
+import static com.example.trello.common.response.ApiResponseWorkspaceEnum.WORKSPACE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -50,18 +55,18 @@ public class CardLogService {
         boolean isBoard = boardRepository.existsById(boardsId);
         boolean isList = listRepository.existsById(listId);
         if (!isUser) {
-            throw new IllegalArgumentException("해당 워크스페이스에 접근 권한이 없습니다.");
+            throw new MemberException(WORKSPACE_ACCESS_DENIED);
         }
         if (!isWorkspace) {
-            throw new IllegalArgumentException("해당 워크 스페이스가 없습니다.");
+            throw new WorkspaceException(WORKSPACE_NOT_FOUND);
         }
         if (!isBoard) {
-            throw new IllegalArgumentException("해당 보더가 없습니다.");
+            throw new BoardException(BOARD_NOT_FOUND);
         }
         if (!isList) {
-            throw new IllegalArgumentException("해당 리스트가 없습니다.");
+            throw new BoardListException(LIST_NOT_FOUND);
         }
         return cardRepository.findById(cardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 카드가 존재하지 않습니다."));
+                () -> new CardException(CARD_NOT_FOUND));
     }
 }

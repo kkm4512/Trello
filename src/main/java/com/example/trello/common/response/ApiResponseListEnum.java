@@ -8,7 +8,9 @@ public enum ApiResponseListEnum implements ApiResponseEnum {
 
     LIST_CREATE_OK(HttpStatus.CREATED, "리스트가 생성되었습니다"),
     LIST_UPDATE_OK(HttpStatus.OK, "리스트가 수정되었습니다"),
-    LIST_DELETED_OK(HttpStatus.OK, "리스트가 삭제되었습니다");
+    LIST_DELETED_OK(HttpStatus.OK, "리스트가 삭제되었습니다"),
+
+    LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "리스트를 찾지 못했습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;
