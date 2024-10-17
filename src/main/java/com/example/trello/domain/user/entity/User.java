@@ -1,6 +1,7 @@
 package com.example.trello.domain.user.entity;
 
 import com.example.trello.common.entity.Timestamped;
+import com.example.trello.domain.comment.entity.Comment;
 import com.example.trello.domain.member.entity.Member;
 import com.example.trello.domain.user.dto.UserRequestDto;
 import jakarta.persistence.*;
@@ -38,6 +39,9 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
 
     public User(UserRequestDto userRequest, UserRole role, String password) {
