@@ -72,14 +72,14 @@ CREATE TABLE member (
 ) ENGINE=InnoDB;
 
 CREATE TABLE users (
-                       user_id BIGINT NOT NULL AUTO_INCREMENT,
+                       id BIGINT NOT NULL AUTO_INCREMENT,
                        created_at DATETIME(6),
                        updated_at DATETIME(6),
                        email VARCHAR(255),
                        password VARCHAR(255) NOT NULL,
                        role ENUM('ADMIN', 'USER') NOT NULL,
                        deleted BIT NOT NULL COMMENT 'Soft-delete indicator',
-                       PRIMARY KEY (user_id)
+                       PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE workspace (
@@ -103,7 +103,7 @@ ALTER TABLE attachment
 
 ALTER TABLE attachment
     ADD CONSTRAINT FKbj8rm4iort67j9jp8ibdftkmq
-        FOREIGN KEY (user_id) REFERENCES users (user_id);
+        FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE board
     ADD CONSTRAINT FKh8r4ryxrng25r7ko3yh5eaudu
@@ -115,7 +115,7 @@ ALTER TABLE board_list
 
 ALTER TABLE board_list
     ADD CONSTRAINT FKmhemj28ukt33oao8xbtcn2ndt
-        FOREIGN KEY (user_id) REFERENCES users (user_id);
+        FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE card
     ADD CONSTRAINT FK8ah8qm5rxxlf22ekmq9v9u5fa
@@ -123,7 +123,7 @@ ALTER TABLE card
 
 ALTER TABLE card
     ADD CONSTRAINT FKq5apcc4ddrab8t48q2uqvyquq
-        FOREIGN KEY (user_id) REFERENCES users (user_id);
+        FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE card_member
     ADD CONSTRAINT FKgp6lai9ewkcfodigcua5taanf
@@ -131,7 +131,7 @@ ALTER TABLE card_member
 
 ALTER TABLE card_member
     ADD CONSTRAINT FKcoy0y9394gd8yp0nq0yuck2q1
-        FOREIGN KEY (user_id) REFERENCES users (user_id);
+        FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE comment
     ADD CONSTRAINT FKqgv5aujiclf0iihwxf4gmkf18
@@ -139,11 +139,11 @@ ALTER TABLE comment
 
 ALTER TABLE comment
     ADD CONSTRAINT FKqm52p1v3o13hy268he0wcngr5
-        FOREIGN KEY (user_id) REFERENCES users (user_id);
+        FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE member
     ADD CONSTRAINT FKe6yo8tn29so0kdd1mw4qk8tgh
-        FOREIGN KEY (user_id) REFERENCES users (user_id);
+        FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE member
     ADD CONSTRAINT FKnhqfvlg5wv3c3qok7st4cuvii
