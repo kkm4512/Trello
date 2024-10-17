@@ -44,11 +44,11 @@ public class MemberValidator {
 
     // 멤버 역할 수정 유효성 검사
     public void validateUpdateRequest(Long workspaceId, Long memberId, MemberUpdateRequest request, Long currentUserId) {
-        if (workspaceId == null || workspaceId <= 0) {
+        if (workspaceId <= 0) {
             throw new MemberException(ApiResponseMemberEnum.WORKSPACE_NOT_FOUND);
         }
 
-        if (memberId == null || memberId <= 0) {
+        if (memberId <= 0) {
             throw new MemberException(ApiResponseMemberEnum.MEMBER_NOT_FOUND);
         }
 
@@ -70,12 +70,12 @@ public class MemberValidator {
     }
 
     // 멤버 삭제 요청 유효성 검사
-    public void validateDeleteRequest(Long workspaceId, Long memberId,  Long currentUserId) {
-        if (workspaceId == null || workspaceId <= 0) {
+    public void validateDeleteRequest(Long workspaceId, Long memberId, Long currentUserId) {
+        if (workspaceId <= 0) {
             throw new MemberException(ApiResponseMemberEnum.WORKSPACE_NOT_FOUND);
         }
 
-        if (memberId == null || memberId <= 0) {
+        if (memberId <= 0) {
             throw new MemberException(ApiResponseMemberEnum.MEMBER_NOT_FOUND);
         }
 
