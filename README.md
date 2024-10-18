@@ -933,6 +933,133 @@ DELETE http://localhost:8080/workspaces/2/boards/1/lists/1/cards/1/member
 ```
 ***
 
+### 카드 검색
+```http
+GET http://localhost:8080/workspaces/{workspaceId}/boards/{boardId}/lists/{listId}/cards/search
+```
+
+#### Request Field 
+| Parameter | Type     |Description                 |
+| :-------- | :------- | :------------------------- |    
+| `Path`     | `Integer` | workspaceId | 
+|`Path`     | `Integer`| boardId|
+|`Path`     | `Integer`| listId|
+|`Body`     | `Long`| cardId|
+|`Body`     | `Long`| boardId|
+|`Body`     | `String`| title|
+|`Body`     | `String`| content|
+|`Body`     | `LocalDateTime`| startAt|
+|`Body`     | `LocalDateTime`| endAt|
+
+(* Body는 필수 입력 값 아님)
+
+
+#### Request Example
+```http
+GET http://localhost:8080/workspaces/{workspaceId}/boards/{boardId}/lists/{listId}/cards/search
+{
+    "cardId" : 1,
+    "boardId" : 1,
+    "title" : "title",
+    "content" : "content",
+    "startAt" : "2024-10-01T00:00:00",
+    "endAt" : "2024-10-30T00:00:00"
+}
+```
+
+#### Response Example
+
+```http
+{
+    "code": 200,
+    "message": "카드들이 검색되었습니다",
+    "data": {
+        "content": [
+            {
+                "cardId": 1,
+                "boardId": 1,
+                "title": "title1",
+                "content": "content1",
+                "createdAt": "2024-10-18T10:10:19.837049",
+                "updatedAt": "2024-10-18T10:10:19.837049"
+            }
+        ],
+        "pageable": {
+            "pageNumber": 0,
+            "pageSize": 10,
+            "sort": {
+                "empty": true,
+                "unsorted": true,
+                "sorted": false
+            },
+            "offset": 0,
+            "unpaged": false,
+            "paged": true
+        },
+        "last": true,
+        "totalPages": 1,
+        "totalElements": 1,
+        "first": true,
+        "size": 10,
+        "number": 0,
+        "sort": {
+            "empty": true,
+            "unsorted": true,
+            "sorted": false
+        },
+        "numberOfElements": 1,
+        "empty": false
+    }
+}
+
+```
+***
+
+### 카드 조회수 랭킹 조회
+```http
+GET http://localhost:8080/workspaces/{workspaceId}/boards/{boardId}/lists/{listId}/cards/ranking
+```
+
+#### Request Field 
+| Parameter | Type     |Description                 |
+| :-------- | :------- | :------------------------- |    
+| `Path`     | `Integer` | workspaceId | 
+|`Path`     | `Integer`| boardId|
+|`Path`     | `Integer`| listId|
+
+#### Request Example
+```http
+GET http://localhost:8080/workspaces/{workspaceId}/boards/{boardId}/lists/{listId}/cards/ranking
+```
+
+### Response Example
+
+```http
+{
+    "code": 200,
+    "message": "카드를 불러왔습니다.",
+    "data": [
+        {
+            "rank": 1,
+            "cardId": 1
+        },
+        {
+            "rank": 2,
+            "cardId": 3
+        },
+        {
+            "rank": 3,
+            "cardId": 2
+        }
+    ]
+}
+
+```
+
+***
+
+
+
 ### Comment
 
 ### 댓글 생성
