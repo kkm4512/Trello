@@ -32,11 +32,11 @@
 
 # 🤔 Authors
 
-- [@gyun97](https://github.com/gyun97)
-- [@kkm4512](https://github.com/kkm4512)
-- [@LJH4987](https://github.com/LJH4987)
-- [@ican0422](https://github.com/ican0422)
-- [@tae98](https://www.github.com/tae98)
+- 김도균(팀장): [@gyun97](https://github.com/gyun97)
+- 김경민: [@kkm4512](https://github.com/kkm4512)
+- 이정현: [@LJH4987](https://github.com/LJH4987)
+- 김현: [@ican0422](https://github.com/ican0422)
+- 김태현: [@tae98](https://www.github.com/tae98)
 
 # 🙏 Acknowledgements
 
