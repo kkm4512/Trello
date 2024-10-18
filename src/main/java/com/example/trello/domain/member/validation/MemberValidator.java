@@ -17,7 +17,7 @@ public class MemberValidator {
 
     private final MemberRepository memberRepository;
 
-    // 관리자 또는 멤버 권한 확인
+    // 워크스페이스 관리자 또는 멤버 역할 확인
     public void validateAdminOrMemberRole(Long memberId, Long workspaceId) {
         Member member = memberRepository.findByUserIdAndWorkspaceId(memberId, workspaceId)
                 .orElseThrow(() -> new MemberException(ApiResponseMemberEnum.WORKSPACE_ACCESS_DENIED));
@@ -26,6 +26,17 @@ public class MemberValidator {
             throw new MemberException(ApiResponseMemberEnum.WORKSPACE_ACCESS_DENIED);
         }
     }
+
+    // 워크스페이스 관리자 역할 확인
+    public void validateWorkspaceAdminRole(Long memberId, Long workspaceId) {
+        Member member = memberRepository.findByUserIdAndWorkspaceId(memberId, workspaceId)
+                .orElseThrow(() -> new MemberException(ApiResponseMemberEnum.WORKSPACE_ACCESS_DENIED));
+
+        if (member.getMemberRole() != MemberRole.WORKSPACE_ADMIN) {
+            throw new MemberException(ApiResponseMemberEnum.WORKSPACE_ACCESS_DENIED);
+        }
+    }
+
 
     // 워크스페이스에 속한 멤버인지 확인 (READ_ONLY, BOARD_MEMBER 포함)
     public void validateMemberInWorkspaceRead(Long userId, Long workspaceId) {
