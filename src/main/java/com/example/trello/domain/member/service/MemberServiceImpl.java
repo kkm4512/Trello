@@ -81,8 +81,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public ApiResponse<MemberResponse> updateMemberRole(Long workspaceId, Long memberId, MemberUpdateRequest request, Long adminId) {
-        // 관리자 또는 멤버 권한 확인
-        memberValidator.validateAdminOrMemberRole(adminId, workspaceId);
+        // 워크스페이스 관리자 권한 확인
+        memberValidator.validateWorkspaceAdminRole(adminId, workspaceId);
 
         // 자기 자신의 역할 변경을 막는 검증 추가
         memberValidator.validateUpdateRequest(workspaceId, memberId, request, adminId);
@@ -102,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public ApiResponse<Void> deleteMember(Long workspaceId, Long memberId, Long adminId) {
         // 관리자 또는 멤버 권한 확인
-        memberValidator.validateAdminOrMemberRole(adminId, workspaceId);
+        memberValidator.validateWorkspaceAdminRole(adminId, workspaceId);
 
         memberValidator.validateDeleteRequest(workspaceId, memberId, adminId);
 
